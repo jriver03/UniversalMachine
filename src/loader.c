@@ -88,26 +88,84 @@ int main(int argc, char **argv) {
         words[i] = be32_from(buf); /* A is MSB */
     }
     fclose(fPath);
-
+    /** 
     size_t preview = nwords < 8 ? nwords : 8;
     for (size_t i = 0; i < preview; ++i) {
         printf("%02zu: 0x%08x\n", i, words[i]);
     }
 
-    /* Decode trace */
+    Decode trace
     printf("-- decode trace (first up to 20 words) --\n");
     size_t steps = nwords < 20 ? nwords : 20;
-    for (size_t pc = 0; pc < steps; ++pc) {
-        uint32_t w = words[pc];
+    for (size_t trace_pc = 0; trace_pc < steps; ++trace_pc) {
+        uint32_t w = words[trace_pc];
         unsigned op = OPC(w);
         if (op == 13u) {
-            printf("pc=%zu op=13 A=%u imm=%u (0x%08x)\n", pc, LI_A(w), LI_VAL(w), LI_VAL(w));
+            printf("pc=%zu op=13 A=%u imm=%u (0x%08x)\n", trace_pc, LI_A(w), LI_VAL(w), LI_VAL(w));
         } else {
-            printf("pc=%zu op=%u A=%u B=%u C=%u\n", pc, op, ABC_A(w), ABC_B(w), ABC_C(w));
+            printf("pc=%zu op=%u A=%u B=%u C=%u\n", trace_pc, op, ABC_A(w), ABC_B(w), ABC_C(w));
         }
     }
+    */
 
-    while 
+    uint32_t regs[8] = {0}; // 8 general-purpose registers
+    uint32_t pc = 0; // Program counter starts at 0
+    uint32_t *mem0 = words; // Array 0 points to loaded program
+    size_t mem0_len = nwords;
+
+    for (;;) {
+        if (pc >= mem0_len) {
+            fprintf(stderr, "PC out of bounds\n");
+            free(words);
+            return 1;
+        }
+
+        uint32_t w = mem0[pc];
+        unsigned op =  w >> 28; // bits 28..31
+
+        unsigned A = 0, B = 0, C = 0;
+        
+        if (op == 13u) {
+            unsigned a = (w >> 25) & 7u;
+            uint32_t imm = w & 0x1FFFFFFu; // bits 0..24
+            regs[a] = imm;
+            pc++;
+            continue;
+        }
+
+        A = (w >> 6) & 7u;
+        B = (w >> 3) & 7u;
+        C = w & 7u;
+
+        switch (op) {
+
+            case 7: { // Halt
+                free(words);
+                return 0; // Machine stops computation
+            }
+
+            case 10: { // Output
+                uint32_t v = regs[C];
+
+                if (v > 255u) { // Output must be 0..255
+                    fprintf(stderr, "Output >255\n");
+                    free(words);
+                    return 1;
+                }
+
+                putchar((int)(v & 0xFF));
+                fflush(stdout);
+                pc++; // PC advances after execution (except op 12)
+                break;
+            }
+
+            default:
+                fprintf(stderr, "Unimplemented opcode %u at pc=%u\n", op, pc);
+                free(words);
+                return 1; // Valid instructions required
+        }
+        
+    }
 
     free(words);
     return 0;
