@@ -2,6 +2,11 @@
 // build (debug): cc -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-point -Wall -Wextra -o loader src/loader.c
 // build (release): cc -std=c17 -03 -DNDEBUG -Wall -Wextra -o loader src/loader.c
 
+/* Mac -> Linux stuff */
+#define _POSIX_C_SOURCE 200809L // expose POSIX_APIs like fseeko/ftello
+#define _FILE_OFFSET_BITS 64 // make off_t 64-bit
+#include <sys/types.h> // declares off_t
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -202,7 +207,7 @@ int main(int argc, char **argv) {
         uint32_t w = g_arr[0].data[pc];
         unsigned op =  OPC(w);
 
-        // Orthography (Load-Immediate) has a special field layout
+        // 13. Load Immediate: uses special fields
         if (op == 13u) {
             unsigned A = LI_A(w);
             uint32_t imm25 = LI_VAL(w); // bits 0..24
