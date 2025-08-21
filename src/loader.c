@@ -1,5 +1,6 @@
 // UM emulator
-// build: cc -std=c17 -Wall -Wextra -O0 -g -fsanitize=address,undefined -o loader src/loader.c
+// build (debug): cc -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-point -Wall -Wextra -o loader src/loader.c
+// build (release): cc -std=c17 -03 -DNDEBUG -Wall -Wextra -o loader src/loader.c
 
 #include <stdio.h>
 #include <stdlib.h>

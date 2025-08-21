@@ -1,32 +1,14 @@
-# Choose compiler
-CC ?= clang
+CC ?= cc
+SRC = src/loader.c
+BIN = loader
 
-# Common warnings and standard
-CFLAGS := -std=c17 -Wall -Wextra -Wshadow
+debug: CFLAGS = -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -Wshadow
+release: CFLAGS = -std=c17 -O3 -DNDEBUG -Wall -Wextra
+perf: CFLAGS = -std=c17 -O3 -DNDEBUG -flto -Wall -Wextra
 
-# Debug vs Release toggle:
-# make           -> debug build (sanitizers on)
-# make RELEASE=1 -> release build (fast)
-ifeq ($(RELEASE),1)
-	CFLAGS += -O3 -DNDEBUG
-else
-	CFLAGS += -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer
-endif
-
-# Your target program and its source(s)
-BIN := loader
-SRC := src/loader.c
-
-.PHONY: all run clean
-
-all: $(BIN)
-
-$(BIN): $(SRC)
-	$(CC) $(CFLAGS) -o $@ $<
-
-# Convenience: run the loader on a sample file
-run: $(BIN)
-	./$(BIN) programs/helloworld.um
+.PHONY: debug release perf clean
+debug release perf:
+	$(CC) $(CFLAGS) -o $(BIN) $(SRC)
 
 clean:
 	rm -f $(BIN)
