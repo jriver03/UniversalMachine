@@ -18,3 +18,9 @@ disasm: src/disasm.c
 	$(CC) -std=c17 -O0 -g -Wall -Wextra -Wshadow \
 	-D_POSIX_C_SOURCE=200809L -D_FILE_OFFSET_BITS=64 \
 	-o disasm src/disasm.c
+
+# ---------- Assembler -----------
+asm: src/asm.c
+	$(CC) -std=c17 -O0 -g -Wall -Wextra -Wshadow \
+	-D_POSIX_C_SOURCE=200809L -D_FILE_OFFSET_BITS=64 \
+	-o asm src/asm.c
