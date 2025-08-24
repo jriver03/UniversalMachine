@@ -1,6 +1,6 @@
 // UM emulator
-// build (debug): cc -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-point -Wall -Wextra -o loader src/loader.c
-// build (release): cc -std=c17 -03 -DNDEBUG -Wall -Wextra -o loader src/loader.c
+// build (debug): cc -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -o loader src/loader.c
+// build (release): cc -std=c17 -O3 -DNDEBUG -Wall -Wextra -o loader src/loader.c
 
 /* Mac -> Linux stuff */
 #define _POSIX_C_SOURCE 200809L // expose POSIX_APIs like fseeko/ftello
@@ -13,7 +13,7 @@
 #include <errno.h>
 #include <string.h>
 
-/*-------------- tiny utils --------------- */
+/*-------------- tiny utils --------------- */ 
 static void die(const char *msg) {
     fprintf(stderr, "error: %s\n", msg);
     exit(1);
@@ -34,6 +34,26 @@ static inline unsigned ABC_B(uint32_t w) {return (w >> 3) & 7u; } // bits 3..5
 static inline unsigned ABC_C(uint32_t w) { return (w >> 0) & 7u; } // bits 0..2
 static inline unsigned LI_A(uint32_t w) { return (w >> 25) & 7u; } // bits 25..27
 static inline unsigned LI_VAL(uint32_t w) {return w & 0x1FFFFFFu; } // bits 0..24
+
+static const char *opname(unsigned op) {
+    switch (op) {
+        case 0: return "cmov";
+        case 1: return "aidx";
+        case 2: return "aupd";
+        case 3: return "add";
+        case 4: return "mul";
+        case 5: return "div";
+        case 6: return "nand";
+        case 7: return "halt";
+        case 8: return "alloc";
+        case 9: return "dealloc";
+        case 10: return "out";
+        case 11: return "in";
+        case 12: return "loadprog";
+        case 13: return "loadimm";
+        default: return "?";
+    }
+}
 
 /* ------------------- array registry ("heap") ---------------- */
 typedef struct {
@@ -126,14 +146,39 @@ static void fail_and_exit(const char *msg) {
     exit(1);
 }
 
+static void dump_reg_changes(uint32_t before[8], uint32_t after[8]) {
+    for (int i = 0; i < 8; ++i) {
+        if(before[i] != after[i]) {
+            fprintf(stderr, "   r%d: %u -> %u\n", i, before[i], after[i]);
+        }
+    }
+}
+
 /* ----------------- main ----------------------*/
 int main(int argc, char **argv) {
-    if (argc != 2) {
-        fprintf(stderr, "usage: %s <program.um>\n", argv[0]);
-        return 2; /* distinguish CLI misues from I/O/runtime failures */
+    int trace = 0;
+    int argi = 1;
+
+    if (argc >= 2 && strcmp(argv[argi], "--trace")==0) {
+        trace = 1;
+        ++argi;
+        setvbuf(stderr, NULL, _IONBF, 0);
     }
 
-    const char *path = argv[1];
+    unsigned trace_limit = 0;
+
+    if (trace) {
+        const char *lim = getenv("UM_TRACE_LIMIT");
+        if (lim && *lim) {
+            trace_limit = (unsigned)strtoul(lim, NULL, 0);
+        }
+    }
+
+    if (argc - argi != 1) {
+        fprintf(stderr, "usage: %s [--trace] <program.um>\n", argv[0]);
+        return 2;
+    }
+    const char *path = argv[argi];
 
     FILE *fPath = fopen(path, "rb");
     if (!fPath) {
@@ -199,6 +244,10 @@ int main(int argc, char **argv) {
 
     /* --------------------- fetch / decode / execute loop -------------------*/
     for (;;) {
+        if (trace && trace_limit && pc >= trace_limit) {
+            fprintf(stderr, "[trace disabled after pc=%u]\n", pc);
+            trace = 0;
+        }
         // Exception: if at cycle start PC outside 0-array capacity is a Fail
         if (pc >= g_arr[0].len) {
             fail_and_exit("PC out of bounds at cycle start");
@@ -206,6 +255,22 @@ int main(int argc, char **argv) {
 
         uint32_t w = g_arr[0].data[pc];
         unsigned op =  OPC(w);
+        
+        uint32_t before[8];
+        if (trace) {
+            memcpy(before, regs, sizeof before);
+        }
+
+        if (trace) {
+            if (op == 13u) {
+                fprintf(stderr, "[pc=%u] 0x%08x %-8s A=%u imm=%u\n",
+                pc, w, opname(op), LI_A(w), LI_VAL(w));
+            } else {
+                fprintf(stderr, "[pc=%u] 0x%08x %-8s A=%u B=%u C=%u | rA=%u rB=%u rC=%u\n",
+                pc, w, opname(op), ABC_A(w), ABC_B(w), ABC_C(w), (unsigned)regs[ABC_A(w)],
+                (unsigned)regs[ABC_B(w)], (unsigned)regs[ABC_C(w)]);
+            }
+        }
 
         // 13. Load Immediate: uses special fields
         if (op == 13u) {
@@ -213,186 +278,190 @@ int main(int argc, char **argv) {
             uint32_t imm25 = LI_VAL(w); // bits 0..24
             regs[A] = imm25;
             pc++;
-            continue;
-        }
+        } else {
 
-        // standard layout (A=6..8, B=3..5, C=0..2)
-        unsigned A = ABC_A(w), B = ABC_B(w), C = ABC_C(w);
+            // standard layout (A=6..8, B=3..5, C=0..2)
+            unsigned A = ABC_A(w), B = ABC_B(w), C = ABC_C(w);
 
-        switch (op) {
+            switch (op) {
 
-            /* 0: Conditional Move: if C != 0 then A <- B */
-            case 0: {
-                if (regs[C] != 0) regs[A] = regs[B];
-                pc++;
-                break;
-            }
+                /* 0: Conditional Move: if C != 0 then A <- B */
+                case 0: {
+                    if (regs[C] != 0) regs[A] = regs[B];
+                    pc++;
+                    break;
+                }
 
-            /* 1: Array Index: A <- mem[B][C] (bounds + active checks) */
-            case 1: {
-                uint32_t id = regs[B], off = regs[C];
+                /* 1: Array Index: A <- mem[B][C] (bounds + active checks) */
+                case 1: {
+                    uint32_t id = regs[B], off = regs[C];
 
-                if (id >= g_arr_len || !g_arr[id].active) fail_and_exit("index: inactive array");
+                    if (id >= g_arr_len || !g_arr[id].active) fail_and_exit("index: inactive array");
 
-                if ((size_t)off >= g_arr[id].len) fail_and_exit("index: offset OOB");
+                    if ((size_t)off >= g_arr[id].len) fail_and_exit("index: offset OOB");
                 
-                regs[A] = g_arr[id].data[off];
-                pc++;
-                break;
-            }
+                    regs[A] = g_arr[id].data[off];
+                    pc++;
+                    break;
+                }
 
-            /* 2: Array Update: mem[A][B] <- C (bounds + active checks) */
-            case 2: {
-                uint32_t id = regs[A], off = regs[B], val = regs[C];
+                /* 2: Array Update: mem[A][B] <- C (bounds + active checks) */
+                case 2: {
+                    uint32_t id = regs[A], off = regs[B], val = regs[C];
 
-                if  (id >= g_arr_len || !g_arr[id].active) fail_and_exit("update: inactive array");
+                    if  (id >= g_arr_len || !g_arr[id].active) fail_and_exit("update: inactive array");
 
-                if ((size_t) off >= g_arr[id].len) fail_and_exit("update: offset OOB");
+                    if ((size_t) off >= g_arr[id].len) fail_and_exit("update: offset OOB");
 
-                g_arr[id].data[off] = val;
-                pc++;
-                break;     
-            }
+                    g_arr[id].data[off] = val;
+                    pc++;
+                    break;     
+                }
             
-            /* 3: Addition: A <-  B + C (mod 2^32) */
-            case 3: {
-                regs[A] = regs[B] + regs[C]; // uint32_t wraps mod 2^32
-                pc++;
-                break;
-            }
-
-            /* 4: Multiplication: A <- B * C (mod 2^32) */
-            case 4: {
-                regs[A] = regs[B] * regs[C];
-                pc++;
-                break;
-            }
-
-            /* 5: Division (unsigned): A <- B / C, /0 = Fail */
-            case 5: {
-                uint32_t denom = regs[C];
-                if (denom == 0) { // Divde by 0 is a fail
-                    fail_and_exit("divide by zero");
-                }
-                regs[A] = regs[B] / denom; // unsigned division
-                pc++;
-                break;
-            }
-
-            /* 6: Not-And: A <- ~(B & C) */
-            case 6: {
-                regs[A] = ~(regs[B] & regs[C]);
-                pc++;
-                break;
-            }
-
-            /* 7: Halt*/
-            case 7: {
-                arrays_destroy();
-                return 0; 
-            }
-
-            /* 8: Allocation: B gets new nonzero id for zeroed array(C) */
-            case 8: {
-                uint32_t n = regs[C];
-                uint32_t *data = NULL;
-                
-                if (n > 0) {
-                    data = (uint32_t*)calloc((size_t)n, sizeof(uint32_t)); // zero-init
-                    if (!data) fail_and_exit("alloc: OOM");
+                /* 3: Addition: A <-  B + C (mod 2^32) */
+                case 3: {
+                    regs[A] = regs[B] + regs[C]; // uint32_t wraps mod 2^32
+                    pc++;
+                    break;
                 }
 
-                uint32_t id = id_acquire();
-
-                if (id == 0) fail_and_exit("alloc: id 0 reserved");
-
-                g_arr[id].data = data;
-                g_arr[id].len = n;
-                g_arr[id].active = 1;
-                regs[B] = id;
-                
-                pc++;
-                break;
-            }
-
-            /* 9: Abandonment: deallocate array id = C (not 0, must be active) */
-            case 9: {
-                uint32_t id = regs[C];
-
-                if (id == 0 || id >= g_arr_len || !g_arr[id].active) {
-                    fail_and_exit("dealloc: invalid or inactive id");
+                /* 4: Multiplication: A <- B * C (mod 2^32) */
+                case 4: {
+                    regs[A] = regs[B] * regs[C];
+                    pc++;
+                    break;
                 }
 
-                free(g_arr[id].data);
-                
-                g_arr[id].data = NULL;
-                g_arr[id].len = 0;
-                g_arr[id].active = 0;
-
-                id_release(id);
-                pc++;
-                break;
-            }
-
-            /* 10: Output: print byte in C (0..255), else Fail */
-            case 10: {
-                uint32_t v = regs[C];
-
-                if (v > 255u) { // Output must be 0..255
-                    fail_and_exit("output: value > 255");
-                }
-
-                putchar((int)(v & 0xFF));
-                fflush(stdout);
-                pc++;
-                break;
-            }
-
-            /* 11: Input: read one byte into C, EOF -> 0xFFFFFFFF */
-            case 11: {
-                int ch = getchar();
-                if (ch == EOF) { 
-                    regs[C] = 0xFFFFFFFFu;
-                } else {
-                    regs[C] = (uint32_t) (unsigned char) ch;
-                }
-                pc++;
-                break;
-            }
-
-            /* 12: Load Program: if B != 0, duplicate mem[B] into mem[0], pc=C (no pc++) */
-            case 12: {
-                uint32_t id = regs[B];
-                uint32_t new_pc = regs[C];
-
-                if (id != 0) {
-                    if (id >= g_arr_len || !g_arr[id].active) {
-                        fail_and_exit("loadprog: inactive id");
+                /* 5: Division (unsigned): A <- B / C, /0 = Fail */
+                case 5: {
+                    uint32_t denom = regs[C];
+                    if (denom == 0) { // Divde by 0 is a fail
+                        fail_and_exit("divide by zero");
                     }
+                    regs[A] = regs[B] / denom; // unsigned division
+                    pc++;
+                    break;
+                }
 
-                    //duplicate mem[B] into a fresh buffer
-                    size_t n = g_arr[id].len;
-                    uint32_t *dup = NULL;
-                    
+                /* 6: Not-And: A <- ~(B & C) */
+                case 6: {
+                    regs[A] = ~(regs[B] & regs[C]);
+                    pc++;
+                    break;
+                }
+
+                /* 7: Halt*/
+                case 7: {
+                    arrays_destroy();
+                    return 0; 
+                }
+
+                /* 8: Allocation: B gets new nonzero id for zeroed array(C) */
+                case 8: {
+                    uint32_t n = regs[C];
+                    uint32_t *data = NULL;
+                
                     if (n > 0) {
-                        dup = (uint32_t*)malloc(n * sizeof(uint32_t));
-                        if (!dup) fail_and_exit("loadprog: OOM");
-                        memcpy(dup, g_arr[id].data, n * sizeof(uint32_t));
+                        data = (uint32_t*)calloc((size_t)n, sizeof(uint32_t)); // zero-init
+                        if (!data) fail_and_exit("alloc: OOM");
                     }
 
-                    // replace array 0's data
-                    free(g_arr[0].data);
-                    g_arr[0].data = dup;
-                    g_arr[0].len = n;
-                    g_arr[0].active = 1;
-                }
-                // jump: set pc = C (no increment)
-                pc = new_pc;
-                break;
-            }
+                    uint32_t id = id_acquire();
 
-            default:
-                fail_and_exit("invalid opcode");
+                    if (id == 0) fail_and_exit("alloc: id 0 reserved");
+                    if (trace) fprintf(stderr, "    alloc -> id=%u, len=%u\n", id, (unsigned)n);
+
+                    g_arr[id].data = data;
+                    g_arr[id].len = n;
+                    g_arr[id].active = 1;
+                    regs[B] = id;
+                
+                    pc++;
+                    break;
+                }
+
+                /* 9: Abandonment: deallocate array id = C (not 0, must be active) */
+                case 9: {
+                    uint32_t id = regs[C];
+
+                    if (id == 0 || id >= g_arr_len || !g_arr[id].active) {
+                        fail_and_exit("dealloc: invalid or inactive id");
+                    }
+
+                    if (trace) fprintf(stderr, "    dealloc id=%u\n", id);
+
+                    free(g_arr[id].data);
+                
+                    g_arr[id].data = NULL;
+                    g_arr[id].len = 0;
+                    g_arr[id].active = 0;
+
+                    id_release(id);
+                    pc++;
+                    break;
+                }
+
+                /* 10: Output: print byte in C (0..255), else Fail */
+                case 10: {
+                    uint32_t v = regs[C];
+
+                    if (v > 255u) { // Output must be 0..255
+                        fail_and_exit("output: value > 255");
+                    }
+
+                    putchar((int)(v & 0xFF));
+                    fflush(stdout);
+                    pc++;
+                    break;
+                }
+
+                /* 11: Input: read one byte into C, EOF -> 0xFFFFFFFF */
+                case 11: {
+                    int ch = getchar();
+                    if (ch == EOF) { 
+                        regs[C] = 0xFFFFFFFFu;
+                    } else {
+                        regs[C] = (uint32_t) (unsigned char) ch;
+                    }
+                    pc++;
+                    break;
+                }
+
+                /* 12: Load Program: if B != 0, duplicate mem[B] into mem[0], pc=C (no pc++) */
+                case 12: {
+                    uint32_t id = regs[B];
+                    uint32_t new_pc = regs[C];
+
+                    if (id != 0) {
+                        if (id >= g_arr_len || !g_arr[id].active) {
+                            fail_and_exit("loadprog: inactive id");
+                        }
+
+                        //duplicate mem[B] into a fresh buffer
+                        size_t n = g_arr[id].len;
+                        uint32_t *dup = NULL;
+                    
+                        if (n > 0) {
+                            dup = (uint32_t*)malloc(n * sizeof(uint32_t));
+                            if (!dup) fail_and_exit("loadprog: OOM");
+                            memcpy(dup, g_arr[id].data, n * sizeof(uint32_t));
+                        }
+
+                        // replace array 0's data
+                        free(g_arr[0].data);
+                        g_arr[0].data = dup;
+                        g_arr[0].len = n;
+                        g_arr[0].active = 1;
+                    }
+                    // jump: set pc = C (no increment)
+                    pc = new_pc;
+                    break;
+                }
+
+                default:
+                    fail_and_exit("invalid opcode");
+            }
         }
+        if (trace) dump_reg_changes(before, regs);
     }
 }
