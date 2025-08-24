@@ -1,0 +1,54 @@
+;; [pc=0 word=0xd0000048]
+loadimm 0 72
+;; [pc=1 word=0xa0000000]
+out 0
+;; [pc=2 word=0xd0000065]
+loadimm 0 101
+;; [pc=3 word=0xa0000000]
+out 0
+;; [pc=4 word=0xd000006c]
+loadimm 0 108
+;; [pc=5 word=0xa0000000]
+out 0
+;; [pc=6 word=0xd000006c]
+loadimm 0 108
+;; [pc=7 word=0xa0000000]
+out 0
+;; [pc=8 word=0xd000006f]
+loadimm 0 111
+;; [pc=9 word=0xa0000000]
+out 0
+;; [pc=10 word=0xd0000020]
+loadimm 0 32
+;; [pc=11 word=0xa0000000]
+out 0
+;; [pc=12 word=0xd0000077]
+loadimm 0 119
+;; [pc=13 word=0xa0000000]
+out 0
+;; [pc=14 word=0xd000006f]
+loadimm 0 111
+;; [pc=15 word=0xa0000000]
+out 0
+;; [pc=16 word=0xd0000072]
+loadimm 0 114
+;; [pc=17 word=0xa0000000]
+out 0
+;; [pc=18 word=0xd000006c]
+loadimm 0 108
+;; [pc=19 word=0xa0000000]
+out 0
+;; [pc=20 word=0xd0000064]
+loadimm 0 100
+;; [pc=21 word=0xa0000000]
+out 0
+;; [pc=22 word=0xd0000021]
+loadimm 0 33
+;; [pc=23 word=0xa0000000]
+out 0
+;; [pc=24 word=0xd000000a]
+loadimm 0 10
+;; [pc=25 word=0xa0000000]
+out 0
+;; [pc=26 word=0x70000000]
+halt
