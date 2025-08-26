@@ -19,6 +19,36 @@ static void die(const char *msg) {
     exit(1);
 }
 
+static const char *build_mode(void) {
+    #if defined(NDEBUG)
+        return "release/perf (-O3, -DNDEBUG; perf may also add -flto)";
+    #else
+        return "debug (-O0, ASan/UBSan)";
+    #endif
+}
+
+static void print_help(const char *prog) {
+    fprintf(stdout, 
+    "UM emulator\n"
+    "\n"
+    "Usage:\n"
+    "  %s [--trace] <program.um>\n"
+    "\n"
+    "Options:\n"
+    "  -h, --help  Show this help and exit\n"
+    "  --trace     Print a per-instruction trace to stderr\n"
+    "\n"
+    "Environment (tracing):\n"
+    "  UM_TRACE_LIMIT=N  Stop printing trace once PC >= N\n"
+    "\nBuild modes (see Makefile targets):\n"
+    "  debug   -O0 + ASan/UBSan\n"
+    "  release -O3 -DNDEBUG\n"
+    "  perf    -O3 -DNDEBUG -flto\n"
+    "\n"
+    "\nThis binary was built as: %s\n", 
+    prog, build_mode());
+}
+
 /* assemble a big-endian 32-bit word from 4 bytes (A is MSB) */
 static inline uint32_t be32_from(const unsigned char b[4]) {
     return ((uint32_t)b[0] << 24) |
@@ -159,6 +189,13 @@ int main(int argc, char **argv) {
     int trace = 0;
     int argi = 1;
 
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
+            print_help(argv[0]);
+            return 0;
+        }
+    }
+
     if (argc >= 2 && strcmp(argv[argi], "--trace")==0) {
         trace = 1;
         ++argi;
@@ -175,7 +212,8 @@ int main(int argc, char **argv) {
     }
 
     if (argc - argi != 1) {
-        fprintf(stderr, "usage: %s [--trace] <program.um>\n", argv[0]);
+        fprintf(stderr, "usage: %s [--trace] <program.um>\n"
+                        "try '%s --help' for more info\n", argv[0], argv[0]);
         return 2;
     }
     const char *path = argv[argi];

@@ -86,3 +86,28 @@ clean:
 
 # ---- deps ----
 -include $(DEPS) $(DISASM_DEPS) $(ASM_DEPS)
+
+PREFIX ?= /usr/local
+
+.PHONY: help install uninstall
+help:
+	@echo "Targets:"
+	@echo "  debug (default)  - Build with ASan/UBSan"
+	@echo "  release          - Optimized build"
+	@echo "  perf             - Optimized LTO build"
+	@echo "  disasm asm       - Build utilities"
+	@echo "  test             - Run tests (optional)"
+	@echo "  clean            - Remove build artifacts"
+	@echo "  install          - Install binaries to $(PREFIX)/bin"
+	@echo "  uninstall        - Remove installed binaries"
+
+install: all disasm asm
+	install -d "$(DESTDIR)$(PREFIX)/bin"
+	install -m 0755 BUILD/loader  "$(DESTDIR)$(PREFIX)/bin/um"
+	install -m 0755 BUILD/disasm  "$(DESTDIR)$(PREFIX)/bin/um-disasm"
+	install -m 0755 BUILD/asm     "$(DESTDIR)$(PREFIX)/bin/um-asm"
+
+uninstall:
+	rm -f "$(DESTDIR)$(PREFIX)/bin/um" \
+	      "$(DESTDIR)$(PREFIX)/bin/um-disasm" \
+	      "$(DESTDIR)$(PREFIX)/bin/um-asm"
