@@ -1,8 +1,34 @@
-// UM emulator
-// build (debug): cc -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer -Wall -Wextra -o loader src/loader.c
-// build (release): cc -std=c17 -O3 -DNDEBUG -Wall -Wextra -o loader src/loader.c
-
-/* Mac -> Linux stuff */
+// UM Emulator (Warmup 1)
+// -----------------------------------------------------------------------------
+// Single-file emulator for the “Universal Machine” ISA
+// specified in machine-specification.pdf.
+//
+// What this program does (high level):
+//   - Loads a .um program as big-endian 32-bit words into “array 0”.
+//   - Initializes 8 x 32-bit registers to 0 and pc = 0.
+//   - Runs a fetch/decode/execute loop implementing opcodes 0..13.
+//   - Supports optional instruction tracing to stderr.
+//   - Fails fast (with a short message) on any spec violation.
+//
+// CLI:
+//   usage: ./BUILD/loader [--trace] <program.um>
+//   env   : UM_TRACE_LIMIT=N   (optional; caps the trace once pc >= N)
+//   help  : -h / --help
+//
+// Fielding (matches disasm/asm):
+//   - op = bits 28..31
+//   - ABC: A=6..8, B=3..5, C=0..2
+//   - loadimm (op=13): A=25..27, imm=0..24
+//
+// Memory model:
+//   - “Arrays” live in a registry keyed by small integer ids.
+//   - id 0 is special: it is the currently loaded program.
+//   - Nonzero arrays are heap-allocated; ids are reused via a free-id stack.
+//
+// Error handling:
+//   - On any spec violation (e.g., divide by zero, OOB access, bad id), print
+//     “fail: …” and exit(1) after freeing any allocated arrays.
+// -----------------------------------------------------------------------------
 #define _POSIX_C_SOURCE 200809L // expose POSIX_APIs like fseeko/ftello
 #define _FILE_OFFSET_BITS 64 // make off_t 64-bit
 #include <sys/types.h> // declares off_t
@@ -14,11 +40,14 @@
 #include <string.h>
 
 /*-------------- tiny utils --------------- */ 
+
+/* simple fatal helper for non-VM errors (I/O, OOM during load, etc.) */
 static void die(const char *msg) {
     fprintf(stderr, "error: %s\n", msg);
     exit(1);
 }
 
+/* used in --help block to show how the binary was built */
 static const char *build_mode(void) {
     #if defined(NDEBUG)
         return "release/perf (-O3, -DNDEBUG; perf may also add -flto)";
@@ -27,6 +56,7 @@ static const char *build_mode(void) {
     #endif
 }
 
+/* help/usage text */
 static void print_help(const char *prog) {
     fprintf(stdout, 
     "UM emulator\n"
@@ -49,6 +79,8 @@ static void print_help(const char *prog) {
     prog, build_mode());
 }
 
+/*---------------------------- word/bitfield utils -----------------------------*/
+
 /* assemble a big-endian 32-bit word from 4 bytes (A is MSB) */
 static inline uint32_t be32_from(const unsigned char b[4]) {
     return ((uint32_t)b[0] << 24) |
@@ -57,7 +89,7 @@ static inline uint32_t be32_from(const unsigned char b[4]) {
            ((uint32_t)b[3] << 0);
 }
 
-/* bitfield helpers */
+/* field extractors */
 static inline unsigned OPC(uint32_t w) { return w >> 28; } // bits 28..31
 static inline unsigned ABC_A(uint32_t w) { return (w >> 6) & 7u; } // bits 6..8
 static inline unsigned ABC_B(uint32_t w) {return (w >> 3) & 7u; } // bits 3..5
@@ -65,6 +97,7 @@ static inline unsigned ABC_C(uint32_t w) { return (w >> 0) & 7u; } // bits 0..2
 static inline unsigned LI_A(uint32_t w) { return (w >> 25) & 7u; } // bits 25..27
 static inline unsigned LI_VAL(uint32_t w) {return w & 0x1FFFFFFu; } // bits 0..24
 
+/* pretty names for trace */
 static const char *opname(unsigned op) {
     switch (op) {
         case 0: return "cmov";
@@ -85,10 +118,10 @@ static const char *opname(unsigned op) {
     }
 }
 
-/* ------------------- array registry ("heap") ---------------- */
+/*--------------------------- array registry (“heap”) --------------------------*/
 typedef struct {
-    uint32_t *data;
-    size_t len;
+    uint32_t *data; // NULL if length 0 or after free
+    size_t len; // number of words
     int active; // 1 if allocated (including id 0 for program), 0 otherwise
 } UMArray;
 
@@ -102,7 +135,7 @@ static uint32_t *g_free_ids = NULL; // LIFO stack of reusable ids
 static size_t g_free_len = 0;
 static size_t g_free_cap = 0;
 
-/* --------------- tiny helpers ------------------ */
+/* ensure registry has room for at least need_cap slots */
 static void arr_reserve(size_t need_cap) {
     if (g_arr_cap >= need_cap) return;
     
@@ -120,6 +153,7 @@ static void arr_reserve(size_t need_cap) {
     g_arr_cap = nc;
 }
 
+/* ensure free-id stack can push one more id */
 static void freeids_reserve(size_t need_cap) {
     if (g_free_cap >= need_cap) return;
 
@@ -134,17 +168,21 @@ static void freeids_reserve(size_t need_cap) {
     g_free_ids = nf;
     g_free_cap = nc;
 }
+
+/* obtain a fresh array id (reusing from free stack if possible) */
 static uint32_t id_acquire(void) {
     if (g_free_len > 0) return g_free_ids[--g_free_len];
     arr_reserve(g_arr_len + 1);
     return (uint32_t)g_arr_len++; // after boot, this will be >= 1
 }
 
+/* return an id to the free stack */
 static void id_release(uint32_t id) {
     freeids_reserve(g_free_len + 1);
     g_free_ids[g_free_len++] = id;
 }
 
+/* initialize registry with program as array 0 */
 static void arrays_boot(uint32_t *program, size_t nwords) {
     arr_reserve(1);
     g_arr_len = 1; // id 0 exists
@@ -153,6 +191,7 @@ static void arrays_boot(uint32_t *program, size_t nwords) {
     g_arr[0].active = 1;
 }
 
+/* free every allocated array and reset globals */
 static void arrays_destroy(void) {
     for (size_t i = 0; i < g_arr_len; ++i) {
         free(g_arr[i].data); // free(NULL) ok, frees program aswell
@@ -170,12 +209,14 @@ static void arrays_destroy(void) {
     g_free_len = g_free_cap = 0;
 }
 
+/* VM-spec failure path: print, cleanup, exit */
 static void fail_and_exit(const char *msg) {
     fprintf(stderr, "fail: %s\n", msg);
     arrays_destroy();
     exit(1);
 }
 
+/* print register deltas for trace (only if any changed) */
 static void dump_reg_changes(uint32_t before[8], uint32_t after[8]) {
     for (int i = 0; i < 8; ++i) {
         if(before[i] != after[i]) {
@@ -184,11 +225,12 @@ static void dump_reg_changes(uint32_t before[8], uint32_t after[8]) {
     }
 }
 
-/* ----------------- main ----------------------*/
+/*------------------------------------ main -----------------------------------*/
 int main(int argc, char **argv) {
     int trace = 0;
     int argi = 1;
 
+    // -h / --help (accept anywhere for convenience)
     for (int i = 1; i < argc; ++i) {
         if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) {
             print_help(argv[0]);
@@ -196,14 +238,15 @@ int main(int argc, char **argv) {
         }
     }
 
+    // optional --trace flag
     if (argc >= 2 && strcmp(argv[argi], "--trace")==0) {
         trace = 1;
         ++argi;
-        setvbuf(stderr, NULL, _IONBF, 0);
+        setvbuf(stderr, NULL, _IONBF, 0); // unbuffered stderr for nicer trace
     }
 
+    // optional trace limit via env var
     unsigned trace_limit = 0;
-
     if (trace) {
         const char *lim = getenv("UM_TRACE_LIMIT");
         if (lim && *lim) {
@@ -211,12 +254,15 @@ int main(int argc, char **argv) {
         }
     }
 
+    // exactly one positional argument is required at this point
     if (argc - argi != 1) {
         fprintf(stderr, "usage: %s [--trace] <program.um>\n"
                         "try '%s --help' for more info\n", argv[0], argv[0]);
         return 2;
     }
     const char *path = argv[argi];
+
+    /*--------------------------- read .um into memory ------------------------*/
 
     FILE *fPath = fopen(path, "rb");
     if (!fPath) {
@@ -277,11 +323,13 @@ int main(int argc, char **argv) {
     // boot machine arrays: id 0 = program
     arrays_boot(words, nwords);
 
+    /*------------------------------ VM registers ----------------------------*/
     uint32_t regs[8] = {0}; // 8 general-purpose registers
     uint32_t pc = 0; // Program counter starts at 0
 
     /* --------------------- fetch / decode / execute loop -------------------*/
     for (;;) {
+        // stop tracing after pc >= limit (if set)
         if (trace && trace_limit && pc >= trace_limit) {
             fprintf(stderr, "[trace disabled after pc=%u]\n", pc);
             trace = 0;
@@ -299,6 +347,7 @@ int main(int argc, char **argv) {
             memcpy(before, regs, sizeof before);
         }
 
+        // per instruction trace
         if (trace) {
             if (op == 13u) {
                 fprintf(stderr, "[pc=%u] 0x%08x %-8s A=%u imm=%u\n",
@@ -500,6 +549,7 @@ int main(int argc, char **argv) {
                     fail_and_exit("invalid opcode");
             }
         }
+        // per instruction register deltas
         if (trace) dump_reg_changes(before, regs);
     }
 }

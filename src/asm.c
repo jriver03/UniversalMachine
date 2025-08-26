@@ -1,13 +1,42 @@
-// UM assembler
+// UM Assembler (Warmup 2)
+// ------------------------------------------------------------
+// Single-file, two-pass assembler for the "Universal Machine" ISA
+// as described in machine-specification.pdf.
 //
+// Pass 1: scan lines, record labels ("label @name") with the PC of
+//         the *next* instruction.
+// Pass 2: re-scan, parse mnemonics + operands, encode 32-bit words,
+//         and write them in big-endian order to the output .um file.
+//
+// Supported mnemonics:
+//   - ABC form: cmov aidx aupd add mul div nand
+//   - specials: halt, alloc, dealloc, out, in, loadprog, loadimm
+//
+// Syntax notes:
+//   - Registers: r0..r7 or 0..7
+//   - Immediates for `loadimm`: decimal/hex/char literal or @label
+//       Examples: 123, 0x7B, 'A', '\n', '\x41', @loop
+//   - Labels:     `label @name`  (records current PC)
+//   - Comments:   everything after ";;" on a line is ignored
+//
+// CLI:
+//   usage: asm <input.uma> [-o output.um]
+//   If -o is omitted, defaults to "a.um".
+//
+// Output format:
+//   - Each instruction encoded as a single 32-bit word.
+//   - Words are written big-endian (MSB first), as required by .um.
+//
+// Error handling: fails fast with line/column context when possible.
+// ------------------------------------------------------------
 
 #ifndef _POSIX_C_SOURCE
 #define _POSIX_C_SOURCE 200809L
-#endif
+#endif // expose POSIX getline, fseeko, etc.
 
 #ifndef _FILE_OFFSET_BITS
 #define _FILE_OFFSET_BITS 64
-#endif
+#endif // 64 bit off_t for large files
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -24,11 +53,14 @@
 # define NORETURN
 #endif
 
+/*--------------------------- tiny fail helpers ---------------------------*/
 static void die(const char *msg) NORETURN;
 static void die(const char *msg) {
     fprintf(stderr, "asm: %s\n", msg);
     exit(1);
 }
+
+/* formatted failure with file:line prefix */
 
 static void failf(const char *file, int line, const char *fmt, ...) NORETURN;
 static void failf(const char *file, int line, const char *fmt, ...) {
@@ -41,11 +73,15 @@ static void failf(const char *file, int line, const char *fmt, ...) {
     exit(1);
 }
 
+/*------------------------ basic lexical helpers -------------------------*/
+
+/* allow letters, digits, and a few punctuation chars in label names */
 static int is_labelch(int c) {
     unsigned char uc = (unsigned char)c;
     return isalnum(uc) || uc=='_' || uc==':' || uc=='.' || uc=='-';
 }
 
+/* fopen with error message */
 static FILE *xfopen(const char *path, const char *mode) {
     FILE *fp = fopen(path, mode);
     
@@ -57,11 +93,13 @@ static FILE *xfopen(const char *path, const char *mode) {
     return fp;
 }
 
+/* remove trailing ";; comment" from a line */
 static void strip_comment(char *s) {
     char *p = strstr(s, ";;");
     if (p) { *p = '\0'; }
 }
 
+/* trim right: newline, CR, or whitespace */
 static void rstrip(char *s) {
     size_t n = strlen(s);
 
@@ -70,17 +108,21 @@ static void rstrip(char *s) {
     }
 }
 
+/* trim left whitespace; returns first non-space */
 static char *lstrip(char *s) {
     while (*s && isspace((unsigned char)*s)) { ++s; }
     return s;
 }
 
+/* true if line is empty after stripping */
 static int is_blank(const char *s) { return *s == '\0'; }
 
+/* parse "label @name" at start of line; write name into out_name */
 static int parse_label(const char *line, char *out_name, size_t cap) {
     const char *p = line;
     const char *kw = "label";
 
+    // match keyword "label"
     while (*kw && *p && *p == *kw) { 
         ++p;
         ++kw;
@@ -88,6 +130,7 @@ static int parse_label(const char *line, char *out_name, size_t cap) {
 
     if (*kw != '\0') return 0;
 
+    // require whitespace then '@'
     if (!isspace((unsigned char)*p)) return 0;
     while (isspace((unsigned char)*p)) ++p;
 
@@ -95,8 +138,8 @@ static int parse_label(const char *line, char *out_name, size_t cap) {
 
     ++p;
 
+    // copy label characters
     size_t k = 0;
-
     while (*p && is_labelch(*p)) {
         if (k + 1 < cap) { out_name[k++] = *p; }
         ++p;
@@ -106,14 +149,17 @@ static int parse_label(const char *line, char *out_name, size_t cap) {
     return k > 0;
 }
 
+/*----------------------------- label table ------------------------------*/
+
 typedef struct { 
-    char *name;
-    uint32_t pc;
+    char *name; // strdup'd
+    uint32_t pc; // instruction index (0-based)
 } Label;
 
 static Label *labels = NULL;
 static size_t nlabels = 0, caplabels = 0;
 
+/* append a label->pc mapping */
 static void labels_add(const char *name, uint32_t pc) {
     if (nlabels == caplabels) {
         size_t nc = caplabels ? caplabels*2 : 16;
@@ -133,6 +179,7 @@ static void labels_add(const char *name, uint32_t pc) {
     nlabels++;
 }
 
+/* lookup; returns 1 if found and stores pc */
 static int labels_find(const char *name, uint32_t *out_pc) {
     for (size_t i = 0; i < nlabels; ++i) {
         if (strcmp(labels[i].name, name) == 0) {
@@ -143,6 +190,7 @@ static int labels_find(const char *name, uint32_t *out_pc) {
     return 0;
 }
 
+/* free entire label table */
 static void labels_free(void) {
     for (size_t i = 0; i < nlabels; ++i) {
         free(labels[i].name);
@@ -152,6 +200,9 @@ static void labels_free(void) {
         nlabels = caplabels = 0;
 }
 
+/*------------------------- output word emission -------------------------*/
+
+/* write a 32-bit word in big-endian byte order */
 static void emit_be32(FILE *f, uint32_t w) {
     unsigned char b[4];
     
@@ -165,6 +216,10 @@ static void emit_be32(FILE *f, uint32_t w) {
     }
 }
 
+/*---------------------------- token helpers -----------------------------*/
+
+/* returns next comma/space-separated token, NULL if none.
+   Mutates the input string: inserts '\0' after the token. */
 static char* next_token(char *s, char **end) {
     while (*s && (isspace((unsigned char)*s) || *s == ',')) ++s;
 
@@ -185,6 +240,7 @@ static char* next_token(char *s, char **end) {
     return s;
 }
 
+/* parse register token: r0..r7 or 0..7 */
 static int parse_reg(const char *t, unsigned *out) {
     if (t[0] == 'r' || t[0] == 'R') ++t;
     char *e = NULL;
@@ -195,6 +251,11 @@ static int parse_reg(const char *t, unsigned *out) {
     return 1;
 }
 
+/* parse immediate:
+   - @label   -> resolve to label PC
+   - 'c' or escaped char: '\n','\t','\r','\0','\\','\'','\xNN'
+   - decimal or hex numeric literal (0x...)
+*/
 static int parse_imm(const char *t, uint32_t *out) {
     if (t[0] == '@') {
         uint32_t pc;
@@ -203,6 +264,7 @@ static int parse_imm(const char *t, uint32_t *out) {
         return 1;
     }
 
+    // character literal
     if (t[0] == '\'') {
         const char *p = t + 1;
         unsigned v = 0;
@@ -245,6 +307,7 @@ static int parse_imm(const char *t, uint32_t *out) {
         return 1;
     }
 
+    // numeric
     char *e = NULL;
     unsigned long v = strtoul(t, &e, 0);
 
@@ -253,6 +316,7 @@ static int parse_imm(const char *t, uint32_t *out) {
     return 1;
 }
 
+/*---------------------------------- main ---------------------------------*/
 int main(int argc, char **argv) {
     const char *in = NULL, *out = NULL;
     
@@ -277,8 +341,11 @@ int main(int argc, char **argv) {
     FILE *fin = xfopen(in, "r");
     FILE *fout = xfopen(out, "wb");
 
-    uint32_t pc = 0;
-    char *line = NULL;
+    /*------------------------------- Pass 1 -------------------------------*/
+    // Scan file, collect labels with the PC (instruction count).
+
+    uint32_t pc = 0; // increments per instruction
+    char *line = NULL; // getline buffer
     size_t cap = 0;
     ssize_t got;
 
@@ -293,20 +360,22 @@ int main(int argc, char **argv) {
         char name[128];
 
         if (parse_label(s, name, sizeof name)) {
-            labels_add(name, pc);
-            continue;
+            labels_add(name, pc); // label points to next instruction index
+            continue; // labels don't consume PC
         }
 
-        pc++;
+        pc++; // count an instruction
     }
 
     free(line);
 
+    // rewind for pass 2
     if (fseeko(fin, 0, SEEK_SET) != 0) {
         die("rewind failed");
     }
 
-
+    /*------------------------------- Pass 2 -------------------------------*/
+    // Re-scan, encode each instruction, and write big-endian words.
     char *line2 = NULL;
     size_t cap2 = 0;
     ssize_t got2;
@@ -322,17 +391,19 @@ int main(int argc, char **argv) {
 
         if (is_blank(s)) continue;
 
+        // skip label lines
         char name[128];
-
         if (parse_label(s, name, sizeof name)) continue;
-
+        
+        // mnemonic + operands
         char *rest = NULL;
         char *mn = next_token(s, &rest);
 
         if (!mn) { failf(in, lineno, "missing mnemonic"); }
 
         uint32_t word = 0;
-
+        
+        /* --- loadimm A IMM (special fielding: op=13, A in 25..27, imm in 0..24 --- */
         if (strcmp(mn, "loadimm") == 0) {
             unsigned A = 0;
             uint32_t imm = 0;
@@ -349,6 +420,7 @@ int main(int argc, char **argv) {
             }
 
             word = (13u<<28) | ((A & 7u) << 25) | (imm & 0x1FFFFFFu);
+        /* --- ABC form: cmov aidx aupd add mul div nand --- */
         } else if (strcmp(mn, "cmov") == 0 || strcmp(mn, "aidx") == 0 ||
                    strcmp(mn, "aupd") == 0 || strcmp(mn, "add") == 0 ||
                    strcmp(mn, "mul") == 0 || strcmp(mn, "div") == 0 ||
@@ -374,11 +446,13 @@ int main(int argc, char **argv) {
                     else op=6;
 
                     word = (op<<28) | ((A&7u)<<6) | ((B&7u)<<3) | (C&7u);
+        /* --- halt (op=7, ABC fields unused/zero) --- */
         } else if (strcmp(mn, "halt")==0) {
             unsigned op = 7;
             unsigned A=0, B=0, C=0;
 
             word = (op<<28) | ((A&7u)<<6) | ((B&7u)<<3) | (C&7u);
+        /* --- alloc B C (op=8, A unused/zero) --- */
         } else if (strcmp(mn, "alloc")==0) {
             unsigned B = 0, C = 0;
 
@@ -392,6 +466,7 @@ int main(int argc, char **argv) {
             unsigned op=8, A=0;
 
             word = (op<<28) | ((A&7u)<<6) | ((B&7u)<<3) | (C&7u);
+        /* --- dealloc C (op=9, A/B unused/zero) --- */
         } else if (strcmp(mn, "dealloc")==0) {
             unsigned C = 0;
             char *tC = next_token(rest, &rest);
@@ -403,6 +478,7 @@ int main(int argc, char **argv) {
             unsigned op=9, A=0, B=0;
 
             word = (op<<28) | ((A&7u)<<6) |((B&7u)<<3) | (C&7u);
+        /* --- out C (op=10) --- */
         } else if (strcmp(mn, "out")==0) {
             unsigned C = 0;
             char *tC = next_token(rest, &rest);
@@ -414,6 +490,7 @@ int main(int argc, char **argv) {
             unsigned op=10, A=0, B=0;
 
             word = (op<<28) | ((A&7u)<<6) | ((B&7u)<<3) | (C&7u);
+        /* --- in C (op=11) --- */
         } else if (strcmp(mn, "in")==0) {
             unsigned C = 0;
             char *tC = next_token(rest, &rest);
@@ -424,6 +501,7 @@ int main(int argc, char **argv) {
 
             unsigned op=11, A=0, B=0;
             word = (op<<28) | ((A&7u)<<6) | ((B&7u)<<3) | (C&7u);
+        /* --- loadprog B C (op=12, A unused/zero) --- */
         } else if (strcmp(mn, "loadprog")==0) {
             unsigned B=0, C=0;
             char *tB = next_token(rest, &rest);
@@ -438,7 +516,7 @@ int main(int argc, char **argv) {
         } else {
             failf(in, lineno, "unknown mnemonic '%s'", mn);
         }
-
+        // emit the encoded word
         emit_be32(fout, word);
     }
 

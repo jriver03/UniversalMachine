@@ -129,7 +129,8 @@ Both are included (simple and single file tools).
 
 ```bash
 make disasm
-./BUILD/disasm programs/helloworld.um | head
+./BUILD/disasm programs/helloworld.um > out/disasm_helloworld.txt
+./BUILD/disasm programs/square.um > out/disasm_square.txt
 ```
 
 Output format is intentionally loose but shows `[pc]` and decoded ops.
@@ -139,14 +140,15 @@ Output format is intentionally loose but shows `[pc]` and decoded ops.
 ```bash
 make asm
 # Assemble a .uma file to .um (big-endian words to stdout)
-./BUILD/asm programs/helloworld.uma > programs/helloworld.um
+./BUILD/asm programs/helloworld.uma -o out/helloworld_from_asm.um
+./BUILD/asm programs/square.um -o out/square_from_asm.um
 ```
 
 The assembly syntax follows the examples used in class (labels optional, immediate forms allowed for `loadimm`, register forms for others). See `programs/*.uma` for reference.
 
 ---
 
-## Traces (Required for Submission)
+## Traces
 
 Traces print to **stderr** when `--trace` is used. Redirect stderr to collect:
 
@@ -162,8 +164,6 @@ printf "12\n" | ./BUILD/loader --trace programs/square.um \
   2> traces/square_12.trace > traces/square_12.out
 ```
 
-Include these trace files in your submission (Canvas wants the *complete* trace for each program).
-
 ---
 
 ## Timing (Sandmark)
@@ -171,13 +171,12 @@ Include these trace files in your submission (Canvas wants the *complete* trace 
 **Host:** callisto  
 **Command:** `/usr/bin/time -p ./BUILD/loader programs/sandmark.um`  
 
-**Example result (replace with your actual):**
+**Example result:**
 ```
-real 12.05
-user 11.99
-sys  0.04
+real 15.12
+user 15.09
+sys  0.00
 ```
-(Stopwatch cross‑check was ~12.25s.)
 
 > For best numbers, use the perf build:
 > ```bash
@@ -201,27 +200,12 @@ sys  0.04
 │  ├─ waste.um
 │  ├─ sandmark.um
 │  └─ *.uma (if used)
+├─ traces/
+├─ out/
 ├─ machine-specification.pdf
 ├─ Makefile
 └─ README.md
 ```
-
----
-
-## Notes for the Grader
-
-- The emulator is self‑contained (`src/loader.c`) and builds with `make` on a standard POSIX toolchain.
-- Disassembler and assembler are included and exercised as examples.
-- Traces for the test programs are provided under `traces/`.
-- Timing for sandmark is reported in this README, with the exact command shown.
-
----
-
-## Implementation Highlights
-
-- Array registry uses a dynamic vector plus a **free‑ID LIFO stack** for reuse.
-- `.um` parsing uses **big‑endian** assembly of 4‑byte words (MSB first).
-- Every opcode’s corner cases (divide‑by‑zero, out‑of‑range output, inactive/OOB arrays) fail fast with a message.
 
 ---
 
@@ -235,7 +219,38 @@ sys  0.04
 
 ## Acknowledgments
 
-- ISA and assignment spec from `machine-specification.pdf`.
-- I wrote tiny disassembler/assembler helpers to speed validation while implementing the emulator.
+	•	Assignment spec & sample programs:
+	  •	Course handout: machine-specification.pdf (provided by the instructor).
+	  •	Sample UM binaries & assembly: programs/helloworld.um, programs/square.um, programs/sandmark.um, programs/waste.um, and corresponding .uma files (provided by the course).
+
+	•	C language & standard library:
+	  •	C17 reference (functions, headers):
+	    •	fopen, fread, fwrite, malloc, calloc, realloc, free, memcpy, memset, strtoul, strtol: https://en.cppreference.com/w/c
+	  •	Integer types & conversions: https://en.cppreference.com/w/c/language/types
+
+	•	POSIX I/O & large-file support:
+	  •	fseeko, ftello, _FILE_OFFSET_BITS=64: https://man7.org/linux/man-pages/man3/fseeko.3.html
+
+	•	Compiler & sanitizers (Clang/LLVM):
+	  •	AddressSanitizer (ASan): https://clang.llvm.org/docs/AddressSanitizer.html
+	  •	UndefinedBehaviorSanitizer (UBSan): https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+	  •	Link Time Optimization (LTO): https://clang.llvm.org/docs/LinkTimeOptimization.html
+
+	•	Build system:
+	  •	GNU Make manual: https://www.gnu.org/software/make/manual/make.html
+	
+  •	Version control:
+	  •	Git book (everyday commands & workflows): https://git-scm.com/book/en/v2
+	  •	Git reference (push/pull, remotes): https://git-scm.com/docs
+
+	•	Shell usage (Bash/Zsh):
+	  •	Redirections & pipelines (Bash Reference Manual §3.7): https://www.gnu.org/software/bash/manual/bash.html#Redirections
+	  •	Process substitution (useful for diff -u <(…) …): https://www.gnu.org/software/bash/manual/bash.html#Process-Substitution
+
+	•	Timing:
+	  •	GNU time utility (/usr/bin/time -p): https://www.gnu.org/software/time/
+
+	•	Acknowledgment of tooling
+	  •	ChatGPT (GPT-5 Thinking) was used for planning, polish, and small test/Makefile scaffolding guidance.
 
 ---
