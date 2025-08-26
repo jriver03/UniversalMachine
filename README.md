@@ -123,7 +123,7 @@ UM_TRACE_LIMIT=10 ./BUILD/loader --trace programs/helloworld.um 2> traces/hellow
 
 ## Disassembler & Assembler
 
-Both are included (simple and single‑file tools).
+Both are included (simple and single file tools).
 
 ### Disassembler
 

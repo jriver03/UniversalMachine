@@ -1,0 +1,1169 @@
+[pc=0] 0xd0000000 loadimm  A=0 imm=0
+[pc=1] 0xd2000001 loadimm  A=1 imm=1
+   r1: 0 -> 1
+[pc=2] 0xda000004 loadimm  A=5 imm=4
+   r5: 0 -> 4
+[pc=3] 0x80000015 alloc    A=0 B=2 C=5 | rA=0 rB=0 rC=4
+    alloc -> id=1, len=4
+   r2: 0 -> 1
+[pc=4] 0xde000008 loadimm  A=7 imm=8
+   r7: 0 -> 8
+[pc=5] 0x2000008f aupd     A=2 B=1 C=7 | rA=1 rB=1 rC=8
+[pc=6] 0xd8000124 loadimm  A=4 imm=292
+   r4: 0 -> 292
+[pc=7] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=292
+[pc=292] 0xda000008 loadimm  A=5 imm=8
+   r5: 4 -> 8
+[pc=293] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=0 rC=8
+    alloc -> id=2, len=8
+   r6: 0 -> 2
+[pc=294] 0x20000182 aupd     A=6 B=0 C=2 | rA=2 rB=0 rC=1
+[pc=295] 0xde00012c loadimm  A=7 imm=300
+   r7: 8 -> 300
+[pc=296] 0x2000018f aupd     A=6 B=1 C=7 | rA=2 rB=1 rC=300
+[pc=297] 0xd800002f loadimm  A=4 imm=47
+   r4: 292 -> 47
+[pc=298] 0x000000b1 cmov     A=2 B=6 C=1 | rA=1 rB=2 rC=1
+   r2: 1 -> 2
+[pc=299] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=47
+[pc=47] 0xda000003 loadimm  A=5 imm=3
+   r5: 8 -> 3
+[pc=48] 0x200000a8 aupd     A=2 B=5 C=0 | rA=2 rB=3 rC=0
+[pc=49] 0xb0000006 in       A=0 B=0 C=6 | rA=0 rB=0 rC=2
+   r6: 2 -> 49
+[pc=50] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=51] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=4 rC=49
+[pc=52] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=53] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=49 rC=5
+    alloc -> id=3, len=5
+   r6: 49 -> 3
+[pc=54] 0x20000182 aupd     A=6 B=0 C=2 | rA=3 rB=0 rC=2
+[pc=55] 0xde000043 loadimm  A=7 imm=67
+   r7: 300 -> 67
+[pc=56] 0x2000018f aupd     A=6 B=1 C=7 | rA=3 rB=1 rC=67
+[pc=57] 0xda000004 loadimm  A=5 imm=4
+   r5: 5 -> 4
+[pc=58] 0x100001d5 aidx     A=7 B=2 C=5 | rA=67 rB=2 rC=4
+   r7: 67 -> 49
+[pc=59] 0xda000002 loadimm  A=5 imm=2
+   r5: 4 -> 2
+[pc=60] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=2 rC=49
+[pc=61] 0xde00000a loadimm  A=7 imm=10
+   r7: 49 -> 10
+[pc=62] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=63] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=3 rC=10
+[pc=64] 0xd8000014 loadimm  A=4 imm=20
+   r4: 47 -> 20
+[pc=65] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=3 rC=1
+   r2: 2 -> 3
+[pc=66] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=20
+[pc=20] 0xda000005 loadimm  A=5 imm=5
+   r5: 3 -> 5
+[pc=21] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=3 rC=5
+    alloc -> id=4, len=5
+   r6: 3 -> 4
+[pc=22] 0x20000182 aupd     A=6 B=0 C=2 | rA=4 rB=0 rC=3
+[pc=23] 0xde000024 loadimm  A=7 imm=36
+   r7: 10 -> 36
+[pc=24] 0x2000018f aupd     A=6 B=1 C=7 | rA=4 rB=1 rC=36
+[pc=25] 0xda000002 loadimm  A=5 imm=2
+   r5: 5 -> 2
+[pc=26] 0x100001d5 aidx     A=7 B=2 C=5 | rA=36 rB=3 rC=2
+   r7: 36 -> 49
+[pc=27] 0xda000002 loadimm  A=5 imm=2
+[pc=28] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=2 rC=49
+[pc=29] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=30] 0x100001d5 aidx     A=7 B=2 C=5 | rA=49 rB=3 rC=3
+   r7: 49 -> 10
+[pc=31] 0xda000003 loadimm  A=5 imm=3
+[pc=32] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=3 rC=10
+[pc=33] 0xd8000009 loadimm  A=4 imm=9
+   r4: 20 -> 9
+[pc=34] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=4 rC=1
+   r2: 3 -> 4
+[pc=35] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+   r6: 4 -> 3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=4 rC=3
+   r6: 3 -> 10
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=10 rB=10 rC=10
+   r6: 10 -> 4294967285
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967285 rB=4294967285 rC=1
+   r6: 4294967285 -> 4294967286
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 10 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=4 rC=2
+   r7: 2 -> 49
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967286 rB=4294967286 rC=49
+   r6: 4294967286 -> 39
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 49 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=4 rB=4 rC=39
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=4 rC=1
+   r4: 9 -> 36
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=36
+[pc=36] 0x10000190 aidx     A=6 B=2 C=0 | rA=39 rB=4 rC=0
+   r6: 39 -> 3
+[pc=37] 0xde000004 loadimm  A=7 imm=4
+[pc=38] 0x100001d7 aidx     A=7 B=2 C=7 | rA=4 rB=4 rC=4
+   r7: 4 -> 39
+[pc=39] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=4
+    dealloc id=4
+[pc=40] 0x000000b1 cmov     A=2 B=6 C=1 | rA=4 rB=3 rC=1
+   r2: 4 -> 3
+[pc=41] 0x00000189 cmov     A=6 B=1 C=1 | rA=3 rB=1 rC=1
+   r6: 3 -> 1
+[pc=42] 0x00000187 cmov     A=6 B=0 C=7 | rA=1 rB=0 rC=39
+   r6: 1 -> 0
+[pc=43] 0xde000004 loadimm  A=7 imm=4
+   r7: 39 -> 4
+[pc=44] 0x200000be aupd     A=2 B=7 C=6 | rA=3 rB=4 rC=0
+[pc=45] 0x10000111 aidx     A=4 B=2 C=1 | rA=36 rB=3 rC=1
+   r4: 36 -> 67
+[pc=46] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=67
+[pc=67] 0x10000190 aidx     A=6 B=2 C=0 | rA=0 rB=3 rC=0
+   r6: 0 -> 2
+[pc=68] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=69] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=3 rC=4
+   r7: 4 -> 0
+[pc=70] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=71] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=5 rC=0
+[pc=72] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=73] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=2 rC=1
+   r2: 3 -> 2
+[pc=74] 0xda000005 loadimm  A=5 imm=5
+[pc=75] 0x100001d5 aidx     A=7 B=2 C=5 | rA=0 rB=2 rC=5
+[pc=76] 0xd8000050 loadimm  A=4 imm=80
+   r4: 67 -> 80
+[pc=77] 0xda000075 loadimm  A=5 imm=117
+   r5: 5 -> 117
+[pc=78] 0x0000012f cmov     A=4 B=5 C=7 | rA=80 rB=117 rC=0
+[pc=79] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=80
+[pc=80] 0xda000003 loadimm  A=5 imm=3
+   r5: 117 -> 3
+[pc=81] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=3
+   r6: 2 -> 0
+[pc=82] 0xde00000a loadimm  A=7 imm=10
+   r7: 0 -> 10
+[pc=83] 0x400001b7 mul      A=6 B=6 C=7 | rA=0 rB=0 rC=10
+[pc=84] 0xda000006 loadimm  A=5 imm=6
+   r5: 3 -> 6
+[pc=85] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=0
+[pc=86] 0xda000005 loadimm  A=5 imm=5
+   r5: 6 -> 5
+[pc=87] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=0 rC=5
+    alloc -> id=3, len=5
+   r6: 0 -> 3
+[pc=88] 0x20000182 aupd     A=6 B=0 C=2 | rA=3 rB=0 rC=2
+[pc=89] 0xde000065 loadimm  A=7 imm=101
+   r7: 10 -> 101
+[pc=90] 0x2000018f aupd     A=6 B=1 C=7 | rA=3 rB=1 rC=101
+[pc=91] 0xda000004 loadimm  A=5 imm=4
+   r5: 5 -> 4
+[pc=92] 0x100001d5 aidx     A=7 B=2 C=5 | rA=101 rB=2 rC=4
+   r7: 101 -> 49
+[pc=93] 0xda000002 loadimm  A=5 imm=2
+   r5: 4 -> 2
+[pc=94] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=2 rC=49
+[pc=95] 0xde000030 loadimm  A=7 imm=48
+   r7: 49 -> 48
+[pc=96] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=97] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=3 rC=48
+[pc=98] 0xd8000009 loadimm  A=4 imm=9
+   r4: 80 -> 9
+[pc=99] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=3 rC=1
+   r2: 2 -> 3
+[pc=100] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=3 rC=3
+   r6: 3 -> 48
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=48 rB=48 rC=48
+   r6: 48 -> 4294967247
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967247 rB=4294967247 rC=1
+   r6: 4294967247 -> 4294967248
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 48 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=3 rC=2
+   r7: 2 -> 49
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967248 rB=4294967248 rC=49
+   r6: 4294967248 -> 1
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 49 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=3 rB=4 rC=1
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=3 rC=1
+   r4: 9 -> 101
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=101
+[pc=101] 0x10000190 aidx     A=6 B=2 C=0 | rA=1 rB=3 rC=0
+   r6: 1 -> 2
+[pc=102] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=103] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=3 rC=4
+   r7: 4 -> 1
+[pc=104] 0xda000007 loadimm  A=5 imm=7
+   r5: 4 -> 7
+[pc=105] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=7 rC=1
+[pc=106] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=107] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=2 rC=1
+   r2: 3 -> 2
+[pc=108] 0xda000006 loadimm  A=5 imm=6
+   r5: 7 -> 6
+[pc=109] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=6
+   r6: 2 -> 0
+[pc=110] 0xda000007 loadimm  A=5 imm=7
+   r5: 6 -> 7
+[pc=111] 0x100001d5 aidx     A=7 B=2 C=5 | rA=1 rB=2 rC=7
+[pc=112] 0x300001b7 add      A=6 B=6 C=7 | rA=0 rB=0 rC=1
+   r6: 0 -> 1
+[pc=113] 0xda000003 loadimm  A=5 imm=3
+   r5: 7 -> 3
+[pc=114] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=3 rC=1
+[pc=115] 0xd8000031 loadimm  A=4 imm=49
+   r4: 101 -> 49
+[pc=116] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=49
+[pc=49] 0xb0000006 in       A=0 B=0 C=6 | rA=0 rB=0 rC=1
+   r6: 1 -> 50
+[pc=50] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=51] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=4 rC=50
+[pc=52] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=53] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=50 rC=5
+    alloc -> id=3, len=5
+   r6: 50 -> 3
+[pc=54] 0x20000182 aupd     A=6 B=0 C=2 | rA=3 rB=0 rC=2
+[pc=55] 0xde000043 loadimm  A=7 imm=67
+   r7: 1 -> 67
+[pc=56] 0x2000018f aupd     A=6 B=1 C=7 | rA=3 rB=1 rC=67
+[pc=57] 0xda000004 loadimm  A=5 imm=4
+   r5: 5 -> 4
+[pc=58] 0x100001d5 aidx     A=7 B=2 C=5 | rA=67 rB=2 rC=4
+   r7: 67 -> 50
+[pc=59] 0xda000002 loadimm  A=5 imm=2
+   r5: 4 -> 2
+[pc=60] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=2 rC=50
+[pc=61] 0xde00000a loadimm  A=7 imm=10
+   r7: 50 -> 10
+[pc=62] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=63] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=3 rC=10
+[pc=64] 0xd8000014 loadimm  A=4 imm=20
+   r4: 49 -> 20
+[pc=65] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=3 rC=1
+   r2: 2 -> 3
+[pc=66] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=20
+[pc=20] 0xda000005 loadimm  A=5 imm=5
+   r5: 3 -> 5
+[pc=21] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=3 rC=5
+    alloc -> id=4, len=5
+   r6: 3 -> 4
+[pc=22] 0x20000182 aupd     A=6 B=0 C=2 | rA=4 rB=0 rC=3
+[pc=23] 0xde000024 loadimm  A=7 imm=36
+   r7: 10 -> 36
+[pc=24] 0x2000018f aupd     A=6 B=1 C=7 | rA=4 rB=1 rC=36
+[pc=25] 0xda000002 loadimm  A=5 imm=2
+   r5: 5 -> 2
+[pc=26] 0x100001d5 aidx     A=7 B=2 C=5 | rA=36 rB=3 rC=2
+   r7: 36 -> 50
+[pc=27] 0xda000002 loadimm  A=5 imm=2
+[pc=28] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=2 rC=50
+[pc=29] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=30] 0x100001d5 aidx     A=7 B=2 C=5 | rA=50 rB=3 rC=3
+   r7: 50 -> 10
+[pc=31] 0xda000003 loadimm  A=5 imm=3
+[pc=32] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=3 rC=10
+[pc=33] 0xd8000009 loadimm  A=4 imm=9
+   r4: 20 -> 9
+[pc=34] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=4 rC=1
+   r2: 3 -> 4
+[pc=35] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+   r6: 4 -> 3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=4 rC=3
+   r6: 3 -> 10
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=10 rB=10 rC=10
+   r6: 10 -> 4294967285
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967285 rB=4294967285 rC=1
+   r6: 4294967285 -> 4294967286
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 10 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=4 rC=2
+   r7: 2 -> 50
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967286 rB=4294967286 rC=50
+   r6: 4294967286 -> 40
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 50 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=4 rB=4 rC=40
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=4 rC=1
+   r4: 9 -> 36
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=36
+[pc=36] 0x10000190 aidx     A=6 B=2 C=0 | rA=40 rB=4 rC=0
+   r6: 40 -> 3
+[pc=37] 0xde000004 loadimm  A=7 imm=4
+[pc=38] 0x100001d7 aidx     A=7 B=2 C=7 | rA=4 rB=4 rC=4
+   r7: 4 -> 40
+[pc=39] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=4
+    dealloc id=4
+[pc=40] 0x000000b1 cmov     A=2 B=6 C=1 | rA=4 rB=3 rC=1
+   r2: 4 -> 3
+[pc=41] 0x00000189 cmov     A=6 B=1 C=1 | rA=3 rB=1 rC=1
+   r6: 3 -> 1
+[pc=42] 0x00000187 cmov     A=6 B=0 C=7 | rA=1 rB=0 rC=40
+   r6: 1 -> 0
+[pc=43] 0xde000004 loadimm  A=7 imm=4
+   r7: 40 -> 4
+[pc=44] 0x200000be aupd     A=2 B=7 C=6 | rA=3 rB=4 rC=0
+[pc=45] 0x10000111 aidx     A=4 B=2 C=1 | rA=36 rB=3 rC=1
+   r4: 36 -> 67
+[pc=46] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=67
+[pc=67] 0x10000190 aidx     A=6 B=2 C=0 | rA=0 rB=3 rC=0
+   r6: 0 -> 2
+[pc=68] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=69] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=3 rC=4
+   r7: 4 -> 0
+[pc=70] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=71] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=5 rC=0
+[pc=72] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=73] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=2 rC=1
+   r2: 3 -> 2
+[pc=74] 0xda000005 loadimm  A=5 imm=5
+[pc=75] 0x100001d5 aidx     A=7 B=2 C=5 | rA=0 rB=2 rC=5
+[pc=76] 0xd8000050 loadimm  A=4 imm=80
+   r4: 67 -> 80
+[pc=77] 0xda000075 loadimm  A=5 imm=117
+   r5: 5 -> 117
+[pc=78] 0x0000012f cmov     A=4 B=5 C=7 | rA=80 rB=117 rC=0
+[pc=79] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=80
+[pc=80] 0xda000003 loadimm  A=5 imm=3
+   r5: 117 -> 3
+[pc=81] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=3
+   r6: 2 -> 1
+[pc=82] 0xde00000a loadimm  A=7 imm=10
+   r7: 0 -> 10
+[pc=83] 0x400001b7 mul      A=6 B=6 C=7 | rA=1 rB=1 rC=10
+   r6: 1 -> 10
+[pc=84] 0xda000006 loadimm  A=5 imm=6
+   r5: 3 -> 6
+[pc=85] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=10
+[pc=86] 0xda000005 loadimm  A=5 imm=5
+   r5: 6 -> 5
+[pc=87] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=10 rC=5
+    alloc -> id=3, len=5
+   r6: 10 -> 3
+[pc=88] 0x20000182 aupd     A=6 B=0 C=2 | rA=3 rB=0 rC=2
+[pc=89] 0xde000065 loadimm  A=7 imm=101
+   r7: 10 -> 101
+[pc=90] 0x2000018f aupd     A=6 B=1 C=7 | rA=3 rB=1 rC=101
+[pc=91] 0xda000004 loadimm  A=5 imm=4
+   r5: 5 -> 4
+[pc=92] 0x100001d5 aidx     A=7 B=2 C=5 | rA=101 rB=2 rC=4
+   r7: 101 -> 50
+[pc=93] 0xda000002 loadimm  A=5 imm=2
+   r5: 4 -> 2
+[pc=94] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=2 rC=50
+[pc=95] 0xde000030 loadimm  A=7 imm=48
+   r7: 50 -> 48
+[pc=96] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=97] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=3 rC=48
+[pc=98] 0xd8000009 loadimm  A=4 imm=9
+   r4: 80 -> 9
+[pc=99] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=3 rC=1
+   r2: 2 -> 3
+[pc=100] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=3 rC=3
+   r6: 3 -> 48
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=48 rB=48 rC=48
+   r6: 48 -> 4294967247
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967247 rB=4294967247 rC=1
+   r6: 4294967247 -> 4294967248
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 48 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=3 rC=2
+   r7: 2 -> 50
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967248 rB=4294967248 rC=50
+   r6: 4294967248 -> 2
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 50 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=3 rB=4 rC=2
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=3 rC=1
+   r4: 9 -> 101
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=101
+[pc=101] 0x10000190 aidx     A=6 B=2 C=0 | rA=2 rB=3 rC=0
+[pc=102] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=103] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=3 rC=4
+   r7: 4 -> 2
+[pc=104] 0xda000007 loadimm  A=5 imm=7
+   r5: 4 -> 7
+[pc=105] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=7 rC=2
+[pc=106] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=107] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=2 rC=1
+   r2: 3 -> 2
+[pc=108] 0xda000006 loadimm  A=5 imm=6
+   r5: 7 -> 6
+[pc=109] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=6
+   r6: 2 -> 10
+[pc=110] 0xda000007 loadimm  A=5 imm=7
+   r5: 6 -> 7
+[pc=111] 0x100001d5 aidx     A=7 B=2 C=5 | rA=2 rB=2 rC=7
+[pc=112] 0x300001b7 add      A=6 B=6 C=7 | rA=10 rB=10 rC=2
+   r6: 10 -> 12
+[pc=113] 0xda000003 loadimm  A=5 imm=3
+   r5: 7 -> 3
+[pc=114] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=3 rC=12
+[pc=115] 0xd8000031 loadimm  A=4 imm=49
+   r4: 101 -> 49
+[pc=116] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=49
+[pc=49] 0xb0000006 in       A=0 B=0 C=6 | rA=0 rB=0 rC=12
+   r6: 12 -> 10
+[pc=50] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=51] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=4 rC=10
+[pc=52] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=53] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=10 rC=5
+    alloc -> id=3, len=5
+   r6: 10 -> 3
+[pc=54] 0x20000182 aupd     A=6 B=0 C=2 | rA=3 rB=0 rC=2
+[pc=55] 0xde000043 loadimm  A=7 imm=67
+   r7: 2 -> 67
+[pc=56] 0x2000018f aupd     A=6 B=1 C=7 | rA=3 rB=1 rC=67
+[pc=57] 0xda000004 loadimm  A=5 imm=4
+   r5: 5 -> 4
+[pc=58] 0x100001d5 aidx     A=7 B=2 C=5 | rA=67 rB=2 rC=4
+   r7: 67 -> 10
+[pc=59] 0xda000002 loadimm  A=5 imm=2
+   r5: 4 -> 2
+[pc=60] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=2 rC=10
+[pc=61] 0xde00000a loadimm  A=7 imm=10
+[pc=62] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=63] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=3 rC=10
+[pc=64] 0xd8000014 loadimm  A=4 imm=20
+   r4: 49 -> 20
+[pc=65] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=3 rC=1
+   r2: 2 -> 3
+[pc=66] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=20
+[pc=20] 0xda000005 loadimm  A=5 imm=5
+   r5: 3 -> 5
+[pc=21] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=3 rC=5
+    alloc -> id=4, len=5
+   r6: 3 -> 4
+[pc=22] 0x20000182 aupd     A=6 B=0 C=2 | rA=4 rB=0 rC=3
+[pc=23] 0xde000024 loadimm  A=7 imm=36
+   r7: 10 -> 36
+[pc=24] 0x2000018f aupd     A=6 B=1 C=7 | rA=4 rB=1 rC=36
+[pc=25] 0xda000002 loadimm  A=5 imm=2
+   r5: 5 -> 2
+[pc=26] 0x100001d5 aidx     A=7 B=2 C=5 | rA=36 rB=3 rC=2
+   r7: 36 -> 10
+[pc=27] 0xda000002 loadimm  A=5 imm=2
+[pc=28] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=2 rC=10
+[pc=29] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=30] 0x100001d5 aidx     A=7 B=2 C=5 | rA=10 rB=3 rC=3
+[pc=31] 0xda000003 loadimm  A=5 imm=3
+[pc=32] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=3 rC=10
+[pc=33] 0xd8000009 loadimm  A=4 imm=9
+   r4: 20 -> 9
+[pc=34] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=4 rC=1
+   r2: 3 -> 4
+[pc=35] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+   r6: 4 -> 3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=4 rC=3
+   r6: 3 -> 10
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=10 rB=10 rC=10
+   r6: 10 -> 4294967285
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967285 rB=4294967285 rC=1
+   r6: 4294967285 -> 4294967286
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 10 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=4 rC=2
+   r7: 2 -> 10
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967286 rB=4294967286 rC=10
+   r6: 4294967286 -> 0
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 10 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=4 rB=4 rC=0
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=4 rC=1
+   r4: 9 -> 36
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=36
+[pc=36] 0x10000190 aidx     A=6 B=2 C=0 | rA=0 rB=4 rC=0
+   r6: 0 -> 3
+[pc=37] 0xde000004 loadimm  A=7 imm=4
+[pc=38] 0x100001d7 aidx     A=7 B=2 C=7 | rA=4 rB=4 rC=4
+   r7: 4 -> 0
+[pc=39] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=4
+    dealloc id=4
+[pc=40] 0x000000b1 cmov     A=2 B=6 C=1 | rA=4 rB=3 rC=1
+   r2: 4 -> 3
+[pc=41] 0x00000189 cmov     A=6 B=1 C=1 | rA=3 rB=1 rC=1
+   r6: 3 -> 1
+[pc=42] 0x00000187 cmov     A=6 B=0 C=7 | rA=1 rB=0 rC=0
+[pc=43] 0xde000004 loadimm  A=7 imm=4
+   r7: 0 -> 4
+[pc=44] 0x200000be aupd     A=2 B=7 C=6 | rA=3 rB=4 rC=1
+[pc=45] 0x10000111 aidx     A=4 B=2 C=1 | rA=36 rB=3 rC=1
+   r4: 36 -> 67
+[pc=46] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=67
+[pc=67] 0x10000190 aidx     A=6 B=2 C=0 | rA=1 rB=3 rC=0
+   r6: 1 -> 2
+[pc=68] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=69] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=3 rC=4
+   r7: 4 -> 1
+[pc=70] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=71] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=5 rC=1
+[pc=72] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=73] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=2 rC=1
+   r2: 3 -> 2
+[pc=74] 0xda000005 loadimm  A=5 imm=5
+[pc=75] 0x100001d5 aidx     A=7 B=2 C=5 | rA=1 rB=2 rC=5
+[pc=76] 0xd8000050 loadimm  A=4 imm=80
+   r4: 67 -> 80
+[pc=77] 0xda000075 loadimm  A=5 imm=117
+   r5: 5 -> 117
+[pc=78] 0x0000012f cmov     A=4 B=5 C=7 | rA=80 rB=117 rC=1
+   r4: 80 -> 117
+[pc=79] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=117
+[pc=117] 0xda000003 loadimm  A=5 imm=3
+   r5: 117 -> 3
+[pc=118] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=3
+   r6: 2 -> 12
+[pc=119] 0xda000002 loadimm  A=5 imm=2
+   r5: 3 -> 2
+[pc=120] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=2 rC=12
+[pc=121] 0x10000111 aidx     A=4 B=2 C=1 | rA=117 rB=2 rC=1
+   r4: 117 -> 300
+[pc=122] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=300
+[pc=300] 0x10000190 aidx     A=6 B=2 C=0 | rA=12 rB=2 rC=0
+   r6: 12 -> 1
+[pc=301] 0xda000002 loadimm  A=5 imm=2
+[pc=302] 0x100001d5 aidx     A=7 B=2 C=5 | rA=1 rB=2 rC=2
+   r7: 1 -> 12
+[pc=303] 0xda000002 loadimm  A=5 imm=2
+[pc=304] 0x200001af aupd     A=6 B=5 C=7 | rA=1 rB=2 rC=12
+[pc=305] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=2
+    dealloc id=2
+[pc=306] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=1 rC=1
+   r2: 2 -> 1
+[pc=307] 0xda000002 loadimm  A=5 imm=2
+[pc=308] 0x10000195 aidx     A=6 B=2 C=5 | rA=1 rB=1 rC=2
+   r6: 1 -> 12
+[pc=309] 0x400001b6 mul      A=6 B=6 C=6 | rA=12 rB=12 rC=12
+   r6: 12 -> 144
+[pc=310] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=311] 0x200000ae aupd     A=2 B=5 C=6 | rA=1 rB=3 rC=144
+[pc=312] 0xda00000a loadimm  A=5 imm=10
+   r5: 3 -> 10
+[pc=313] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=144 rC=10
+    alloc -> id=2, len=10
+   r6: 144 -> 2
+[pc=314] 0x20000182 aupd     A=6 B=0 C=2 | rA=2 rB=0 rC=1
+[pc=315] 0xde000144 loadimm  A=7 imm=324
+   r7: 12 -> 324
+[pc=316] 0x2000018f aupd     A=6 B=1 C=7 | rA=2 rB=1 rC=324
+[pc=317] 0xda000003 loadimm  A=5 imm=3
+   r5: 10 -> 3
+[pc=318] 0x100001d5 aidx     A=7 B=2 C=5 | rA=324 rB=1 rC=3
+   r7: 324 -> 144
+[pc=319] 0xda000002 loadimm  A=5 imm=2
+   r5: 3 -> 2
+[pc=320] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=2 rC=144
+[pc=321] 0xd80000b9 loadimm  A=4 imm=185
+   r4: 300 -> 185
+[pc=322] 0x000000b1 cmov     A=2 B=6 C=1 | rA=1 rB=2 rC=1
+   r2: 1 -> 2
+[pc=323] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=185
+[pc=185] 0xda000008 loadimm  A=5 imm=8
+   r5: 2 -> 8
+[pc=186] 0x200000a8 aupd     A=2 B=5 C=0 | rA=2 rB=8 rC=0
+[pc=187] 0xda000002 loadimm  A=5 imm=2
+   r5: 8 -> 2
+[pc=188] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=2
+   r6: 2 -> 144
+[pc=189] 0xda000003 loadimm  A=5 imm=3
+   r5: 2 -> 3
+[pc=190] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=3 rC=144
+[pc=191] 0xda000003 loadimm  A=5 imm=3
+[pc=192] 0x10000195 aidx     A=6 B=2 C=5 | rA=144 rB=2 rC=3
+[pc=193] 0xde00000a loadimm  A=7 imm=10
+   r7: 144 -> 10
+[pc=194] 0x500001b7 div      A=6 B=6 C=7 | rA=144 rB=144 rC=10
+   r6: 144 -> 14
+[pc=195] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=196] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=4 rC=14
+[pc=197] 0xda000004 loadimm  A=5 imm=4
+[pc=198] 0x10000195 aidx     A=6 B=2 C=5 | rA=14 rB=2 rC=4
+[pc=199] 0xde00000a loadimm  A=7 imm=10
+[pc=200] 0x400001b7 mul      A=6 B=6 C=7 | rA=14 rB=14 rC=10
+   r6: 14 -> 140
+[pc=201] 0xda000007 loadimm  A=5 imm=7
+   r5: 4 -> 7
+[pc=202] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=7 rC=140
+[pc=203] 0xda000005 loadimm  A=5 imm=5
+   r5: 7 -> 5
+[pc=204] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=140 rC=5
+    alloc -> id=3, len=5
+   r6: 140 -> 3
+[pc=205] 0x20000182 aupd     A=6 B=0 C=2 | rA=3 rB=0 rC=2
+[pc=206] 0xde0000db loadimm  A=7 imm=219
+   r7: 10 -> 219
+[pc=207] 0x2000018f aupd     A=6 B=1 C=7 | rA=3 rB=1 rC=219
+[pc=208] 0xda000003 loadimm  A=5 imm=3
+   r5: 5 -> 3
+[pc=209] 0x100001d5 aidx     A=7 B=2 C=5 | rA=219 rB=2 rC=3
+   r7: 219 -> 144
+[pc=210] 0xda000002 loadimm  A=5 imm=2
+   r5: 3 -> 2
+[pc=211] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=2 rC=144
+[pc=212] 0xda000007 loadimm  A=5 imm=7
+   r5: 2 -> 7
+[pc=213] 0x100001d5 aidx     A=7 B=2 C=5 | rA=144 rB=2 rC=7
+   r7: 144 -> 140
+[pc=214] 0xda000003 loadimm  A=5 imm=3
+   r5: 7 -> 3
+[pc=215] 0x200001af aupd     A=6 B=5 C=7 | rA=3 rB=3 rC=140
+[pc=216] 0xd8000009 loadimm  A=4 imm=9
+   r4: 185 -> 9
+[pc=217] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=3 rC=1
+   r2: 2 -> 3
+[pc=218] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=3 rC=3
+   r6: 3 -> 140
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=140 rB=140 rC=140
+   r6: 140 -> 4294967155
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967155 rB=4294967155 rC=1
+   r6: 4294967155 -> 4294967156
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 140 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=3 rC=2
+   r7: 2 -> 144
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967156 rB=4294967156 rC=144
+   r6: 4294967156 -> 4
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 144 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=3 rB=4 rC=4
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=3 rC=1
+   r4: 9 -> 219
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=219
+[pc=219] 0x10000190 aidx     A=6 B=2 C=0 | rA=4 rB=3 rC=0
+   r6: 4 -> 2
+[pc=220] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=221] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=3 rC=4
+[pc=222] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=223] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=5 rC=4
+[pc=224] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=225] 0x000000b1 cmov     A=2 B=6 C=1 | rA=3 rB=2 rC=1
+   r2: 3 -> 2
+[pc=226] 0xda000005 loadimm  A=5 imm=5
+[pc=227] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=5
+   r6: 2 -> 4
+[pc=228] 0xde000030 loadimm  A=7 imm=48
+   r7: 4 -> 48
+[pc=229] 0x300001b7 add      A=6 B=6 C=7 | rA=4 rB=4 rC=48
+   r6: 4 -> 52
+[pc=230] 0xda000006 loadimm  A=5 imm=6
+   r5: 5 -> 6
+[pc=231] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=52
+[pc=232] 0xdc000002 loadimm  A=6 imm=2
+   r6: 52 -> 2
+[pc=233] 0x80000036 alloc    A=0 B=6 C=6 | rA=0 rB=2 rC=2
+    alloc -> id=3, len=2
+   r6: 2 -> 3
+[pc=234] 0xda000009 loadimm  A=5 imm=9
+   r5: 6 -> 9
+[pc=235] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=9 rC=3
+[pc=236] 0xda000006 loadimm  A=5 imm=6
+   r5: 9 -> 6
+[pc=237] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=6
+   r6: 3 -> 52
+[pc=238] 0xda000009 loadimm  A=5 imm=9
+   r5: 6 -> 9
+[pc=239] 0x100001d5 aidx     A=7 B=2 C=5 | rA=48 rB=2 rC=9
+   r7: 48 -> 3
+[pc=240] 0x200001c6 aupd     A=7 B=0 C=6 | rA=3 rB=0 rC=52
+[pc=241] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=242] 0x10000195 aidx     A=6 B=2 C=5 | rA=52 rB=2 rC=8
+   r6: 52 -> 0
+[pc=243] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=244] 0x100001d5 aidx     A=7 B=2 C=5 | rA=3 rB=2 rC=9
+[pc=245] 0x200001ce aupd     A=7 B=1 C=6 | rA=3 rB=1 rC=0
+[pc=246] 0xda000009 loadimm  A=5 imm=9
+[pc=247] 0x10000195 aidx     A=6 B=2 C=5 | rA=0 rB=2 rC=9
+   r6: 0 -> 3
+[pc=248] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=249] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=8 rC=3
+[pc=250] 0xda000004 loadimm  A=5 imm=4
+   r5: 8 -> 4
+[pc=251] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=4
+   r6: 3 -> 14
+[pc=252] 0xda000003 loadimm  A=5 imm=3
+   r5: 4 -> 3
+[pc=253] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=3 rC=14
+[pc=254] 0xda000003 loadimm  A=5 imm=3
+[pc=255] 0x10000195 aidx     A=6 B=2 C=5 | rA=14 rB=2 rC=3
+[pc=256] 0xd8000104 loadimm  A=4 imm=260
+   r4: 219 -> 260
+[pc=257] 0xda0000bf loadimm  A=5 imm=191
+   r5: 3 -> 191
+[pc=258] 0x0000012e cmov     A=4 B=5 C=6 | rA=260 rB=191 rC=14
+   r4: 260 -> 191
+[pc=259] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=191
+[pc=191] 0xda000003 loadimm  A=5 imm=3
+   r5: 191 -> 3
+[pc=192] 0x10000195 aidx     A=6 B=2 C=5 | rA=14 rB=2 rC=3
+[pc=193] 0xde00000a loadimm  A=7 imm=10
+   r7: 3 -> 10
+[pc=194] 0x500001b7 div      A=6 B=6 C=7 | rA=14 rB=14 rC=10
+   r6: 14 -> 1
+[pc=195] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=196] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=4 rC=1
+[pc=197] 0xda000004 loadimm  A=5 imm=4
+[pc=198] 0x10000195 aidx     A=6 B=2 C=5 | rA=1 rB=2 rC=4
+[pc=199] 0xde00000a loadimm  A=7 imm=10
+[pc=200] 0x400001b7 mul      A=6 B=6 C=7 | rA=1 rB=1 rC=10
+   r6: 1 -> 10
+[pc=201] 0xda000007 loadimm  A=5 imm=7
+   r5: 4 -> 7
+[pc=202] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=7 rC=10
+[pc=203] 0xda000005 loadimm  A=5 imm=5
+   r5: 7 -> 5
+[pc=204] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=10 rC=5
+    alloc -> id=4, len=5
+   r6: 10 -> 4
+[pc=205] 0x20000182 aupd     A=6 B=0 C=2 | rA=4 rB=0 rC=2
+[pc=206] 0xde0000db loadimm  A=7 imm=219
+   r7: 10 -> 219
+[pc=207] 0x2000018f aupd     A=6 B=1 C=7 | rA=4 rB=1 rC=219
+[pc=208] 0xda000003 loadimm  A=5 imm=3
+   r5: 5 -> 3
+[pc=209] 0x100001d5 aidx     A=7 B=2 C=5 | rA=219 rB=2 rC=3
+   r7: 219 -> 14
+[pc=210] 0xda000002 loadimm  A=5 imm=2
+   r5: 3 -> 2
+[pc=211] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=2 rC=14
+[pc=212] 0xda000007 loadimm  A=5 imm=7
+   r5: 2 -> 7
+[pc=213] 0x100001d5 aidx     A=7 B=2 C=5 | rA=14 rB=2 rC=7
+   r7: 14 -> 10
+[pc=214] 0xda000003 loadimm  A=5 imm=3
+   r5: 7 -> 3
+[pc=215] 0x200001af aupd     A=6 B=5 C=7 | rA=4 rB=3 rC=10
+[pc=216] 0xd8000009 loadimm  A=4 imm=9
+   r4: 191 -> 9
+[pc=217] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=4 rC=1
+   r2: 2 -> 4
+[pc=218] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+   r6: 4 -> 3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=4 rC=3
+   r6: 3 -> 10
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=10 rB=10 rC=10
+   r6: 10 -> 4294967285
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967285 rB=4294967285 rC=1
+   r6: 4294967285 -> 4294967286
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 10 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=4 rC=2
+   r7: 2 -> 14
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=4294967286 rB=4294967286 rC=14
+   r6: 4294967286 -> 4
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 14 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=4 rB=4 rC=4
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=4 rC=1
+   r4: 9 -> 219
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=219
+[pc=219] 0x10000190 aidx     A=6 B=2 C=0 | rA=4 rB=4 rC=0
+   r6: 4 -> 2
+[pc=220] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=221] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=4 rC=4
+[pc=222] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=223] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=5 rC=4
+[pc=224] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=4
+    dealloc id=4
+[pc=225] 0x000000b1 cmov     A=2 B=6 C=1 | rA=4 rB=2 rC=1
+   r2: 4 -> 2
+[pc=226] 0xda000005 loadimm  A=5 imm=5
+[pc=227] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=5
+   r6: 2 -> 4
+[pc=228] 0xde000030 loadimm  A=7 imm=48
+   r7: 4 -> 48
+[pc=229] 0x300001b7 add      A=6 B=6 C=7 | rA=4 rB=4 rC=48
+   r6: 4 -> 52
+[pc=230] 0xda000006 loadimm  A=5 imm=6
+   r5: 5 -> 6
+[pc=231] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=52
+[pc=232] 0xdc000002 loadimm  A=6 imm=2
+   r6: 52 -> 2
+[pc=233] 0x80000036 alloc    A=0 B=6 C=6 | rA=0 rB=2 rC=2
+    alloc -> id=4, len=2
+   r6: 2 -> 4
+[pc=234] 0xda000009 loadimm  A=5 imm=9
+   r5: 6 -> 9
+[pc=235] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=9 rC=4
+[pc=236] 0xda000006 loadimm  A=5 imm=6
+   r5: 9 -> 6
+[pc=237] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=6
+   r6: 4 -> 52
+[pc=238] 0xda000009 loadimm  A=5 imm=9
+   r5: 6 -> 9
+[pc=239] 0x100001d5 aidx     A=7 B=2 C=5 | rA=48 rB=2 rC=9
+   r7: 48 -> 4
+[pc=240] 0x200001c6 aupd     A=7 B=0 C=6 | rA=4 rB=0 rC=52
+[pc=241] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=242] 0x10000195 aidx     A=6 B=2 C=5 | rA=52 rB=2 rC=8
+   r6: 52 -> 3
+[pc=243] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=244] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=2 rC=9
+[pc=245] 0x200001ce aupd     A=7 B=1 C=6 | rA=4 rB=1 rC=3
+[pc=246] 0xda000009 loadimm  A=5 imm=9
+[pc=247] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=9
+   r6: 3 -> 4
+[pc=248] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=249] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=8 rC=4
+[pc=250] 0xda000004 loadimm  A=5 imm=4
+   r5: 8 -> 4
+[pc=251] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=4
+   r6: 4 -> 1
+[pc=252] 0xda000003 loadimm  A=5 imm=3
+   r5: 4 -> 3
+[pc=253] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=3 rC=1
+[pc=254] 0xda000003 loadimm  A=5 imm=3
+[pc=255] 0x10000195 aidx     A=6 B=2 C=5 | rA=1 rB=2 rC=3
+[pc=256] 0xd8000104 loadimm  A=4 imm=260
+   r4: 219 -> 260
+[pc=257] 0xda0000bf loadimm  A=5 imm=191
+   r5: 3 -> 191
+[pc=258] 0x0000012e cmov     A=4 B=5 C=6 | rA=260 rB=191 rC=1
+   r4: 260 -> 191
+[pc=259] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=191
+[pc=191] 0xda000003 loadimm  A=5 imm=3
+   r5: 191 -> 3
+[pc=192] 0x10000195 aidx     A=6 B=2 C=5 | rA=1 rB=2 rC=3
+[pc=193] 0xde00000a loadimm  A=7 imm=10
+   r7: 4 -> 10
+[pc=194] 0x500001b7 div      A=6 B=6 C=7 | rA=1 rB=1 rC=10
+   r6: 1 -> 0
+[pc=195] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=196] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=4 rC=0
+[pc=197] 0xda000004 loadimm  A=5 imm=4
+[pc=198] 0x10000195 aidx     A=6 B=2 C=5 | rA=0 rB=2 rC=4
+[pc=199] 0xde00000a loadimm  A=7 imm=10
+[pc=200] 0x400001b7 mul      A=6 B=6 C=7 | rA=0 rB=0 rC=10
+[pc=201] 0xda000007 loadimm  A=5 imm=7
+   r5: 4 -> 7
+[pc=202] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=7 rC=0
+[pc=203] 0xda000005 loadimm  A=5 imm=5
+   r5: 7 -> 5
+[pc=204] 0x80000035 alloc    A=0 B=6 C=5 | rA=0 rB=0 rC=5
+    alloc -> id=5, len=5
+   r6: 0 -> 5
+[pc=205] 0x20000182 aupd     A=6 B=0 C=2 | rA=5 rB=0 rC=2
+[pc=206] 0xde0000db loadimm  A=7 imm=219
+   r7: 10 -> 219
+[pc=207] 0x2000018f aupd     A=6 B=1 C=7 | rA=5 rB=1 rC=219
+[pc=208] 0xda000003 loadimm  A=5 imm=3
+   r5: 5 -> 3
+[pc=209] 0x100001d5 aidx     A=7 B=2 C=5 | rA=219 rB=2 rC=3
+   r7: 219 -> 1
+[pc=210] 0xda000002 loadimm  A=5 imm=2
+   r5: 3 -> 2
+[pc=211] 0x200001af aupd     A=6 B=5 C=7 | rA=5 rB=2 rC=1
+[pc=212] 0xda000007 loadimm  A=5 imm=7
+   r5: 2 -> 7
+[pc=213] 0x100001d5 aidx     A=7 B=2 C=5 | rA=1 rB=2 rC=7
+   r7: 1 -> 0
+[pc=214] 0xda000003 loadimm  A=5 imm=3
+   r5: 7 -> 3
+[pc=215] 0x200001af aupd     A=6 B=5 C=7 | rA=5 rB=3 rC=0
+[pc=216] 0xd8000009 loadimm  A=4 imm=9
+   r4: 191 -> 9
+[pc=217] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=5 rC=1
+   r2: 2 -> 5
+[pc=218] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=9
+[pc=9] 0xdc000003 loadimm  A=6 imm=3
+   r6: 5 -> 3
+[pc=10] 0x10000196 aidx     A=6 B=2 C=6 | rA=3 rB=5 rC=3
+   r6: 3 -> 0
+[pc=11] 0x600001b6 nand     A=6 B=6 C=6 | rA=0 rB=0 rC=0
+   r6: 0 -> 4294967295
+[pc=12] 0x300001b1 add      A=6 B=6 C=1 | rA=4294967295 rB=4294967295 rC=1
+   r6: 4294967295 -> 0
+[pc=13] 0xde000002 loadimm  A=7 imm=2
+   r7: 0 -> 2
+[pc=14] 0x100001d7 aidx     A=7 B=2 C=7 | rA=2 rB=5 rC=2
+   r7: 2 -> 1
+[pc=15] 0x300001b7 add      A=6 B=6 C=7 | rA=0 rB=0 rC=1
+   r6: 0 -> 1
+[pc=16] 0xde000004 loadimm  A=7 imm=4
+   r7: 1 -> 4
+[pc=17] 0x200000be aupd     A=2 B=7 C=6 | rA=5 rB=4 rC=1
+[pc=18] 0x10000111 aidx     A=4 B=2 C=1 | rA=9 rB=5 rC=1
+   r4: 9 -> 219
+[pc=19] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=219
+[pc=219] 0x10000190 aidx     A=6 B=2 C=0 | rA=1 rB=5 rC=0
+   r6: 1 -> 2
+[pc=220] 0xda000004 loadimm  A=5 imm=4
+   r5: 3 -> 4
+[pc=221] 0x100001d5 aidx     A=7 B=2 C=5 | rA=4 rB=5 rC=4
+   r7: 4 -> 1
+[pc=222] 0xda000005 loadimm  A=5 imm=5
+   r5: 4 -> 5
+[pc=223] 0x200001af aupd     A=6 B=5 C=7 | rA=2 rB=5 rC=1
+[pc=224] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=5
+    dealloc id=5
+[pc=225] 0x000000b1 cmov     A=2 B=6 C=1 | rA=5 rB=2 rC=1
+   r2: 5 -> 2
+[pc=226] 0xda000005 loadimm  A=5 imm=5
+[pc=227] 0x10000195 aidx     A=6 B=2 C=5 | rA=2 rB=2 rC=5
+   r6: 2 -> 1
+[pc=228] 0xde000030 loadimm  A=7 imm=48
+   r7: 1 -> 48
+[pc=229] 0x300001b7 add      A=6 B=6 C=7 | rA=1 rB=1 rC=48
+   r6: 1 -> 49
+[pc=230] 0xda000006 loadimm  A=5 imm=6
+   r5: 5 -> 6
+[pc=231] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=49
+[pc=232] 0xdc000002 loadimm  A=6 imm=2
+   r6: 49 -> 2
+[pc=233] 0x80000036 alloc    A=0 B=6 C=6 | rA=0 rB=2 rC=2
+    alloc -> id=5, len=2
+   r6: 2 -> 5
+[pc=234] 0xda000009 loadimm  A=5 imm=9
+   r5: 6 -> 9
+[pc=235] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=9 rC=5
+[pc=236] 0xda000006 loadimm  A=5 imm=6
+   r5: 9 -> 6
+[pc=237] 0x10000195 aidx     A=6 B=2 C=5 | rA=5 rB=2 rC=6
+   r6: 5 -> 49
+[pc=238] 0xda000009 loadimm  A=5 imm=9
+   r5: 6 -> 9
+[pc=239] 0x100001d5 aidx     A=7 B=2 C=5 | rA=48 rB=2 rC=9
+   r7: 48 -> 5
+[pc=240] 0x200001c6 aupd     A=7 B=0 C=6 | rA=5 rB=0 rC=49
+[pc=241] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=242] 0x10000195 aidx     A=6 B=2 C=5 | rA=49 rB=2 rC=8
+   r6: 49 -> 4
+[pc=243] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=244] 0x100001d5 aidx     A=7 B=2 C=5 | rA=5 rB=2 rC=9
+[pc=245] 0x200001ce aupd     A=7 B=1 C=6 | rA=5 rB=1 rC=4
+[pc=246] 0xda000009 loadimm  A=5 imm=9
+[pc=247] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=9
+   r6: 4 -> 5
+[pc=248] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=249] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=8 rC=5
+[pc=250] 0xda000004 loadimm  A=5 imm=4
+   r5: 8 -> 4
+[pc=251] 0x10000195 aidx     A=6 B=2 C=5 | rA=5 rB=2 rC=4
+   r6: 5 -> 0
+[pc=252] 0xda000003 loadimm  A=5 imm=3
+   r5: 4 -> 3
+[pc=253] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=3 rC=0
+[pc=254] 0xda000003 loadimm  A=5 imm=3
+[pc=255] 0x10000195 aidx     A=6 B=2 C=5 | rA=0 rB=2 rC=3
+[pc=256] 0xd8000104 loadimm  A=4 imm=260
+   r4: 219 -> 260
+[pc=257] 0xda0000bf loadimm  A=5 imm=191
+   r5: 3 -> 191
+[pc=258] 0x0000012e cmov     A=4 B=5 C=6 | rA=260 rB=191 rC=0
+[pc=259] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=260
+[pc=260] 0xda000008 loadimm  A=5 imm=8
+   r5: 191 -> 8
+[pc=261] 0x10000195 aidx     A=6 B=2 C=5 | rA=0 rB=2 rC=8
+   r6: 0 -> 5
+[pc=262] 0xd8000120 loadimm  A=4 imm=288
+   r4: 260 -> 288
+[pc=263] 0xda00010a loadimm  A=5 imm=266
+   r5: 8 -> 266
+[pc=264] 0x0000012e cmov     A=4 B=5 C=6 | rA=288 rB=266 rC=5
+   r4: 288 -> 266
+[pc=265] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=266
+[pc=266] 0xda000008 loadimm  A=5 imm=8
+   r5: 266 -> 8
+[pc=267] 0x10000195 aidx     A=6 B=2 C=5 | rA=5 rB=2 rC=8
+[pc=268] 0x100001b0 aidx     A=6 B=6 C=0 | rA=5 rB=5 rC=0
+   r6: 5 -> 49
+[pc=269] 0xda000006 loadimm  A=5 imm=6
+   r5: 8 -> 6
+[pc=270] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=49
+[pc=271] 0xda000006 loadimm  A=5 imm=6
+[pc=272] 0x10000195 aidx     A=6 B=2 C=5 | rA=49 rB=2 rC=6
+[pc=273] 0xa0000006 out      A=0 B=0 C=6 | rA=0 rB=0 rC=49
+[pc=274] 0xda000008 loadimm  A=5 imm=8
+   r5: 6 -> 8
+[pc=275] 0x10000195 aidx     A=6 B=2 C=5 | rA=49 rB=2 rC=8
+   r6: 49 -> 5
+[pc=276] 0x100001b1 aidx     A=6 B=6 C=1 | rA=5 rB=5 rC=1
+   r6: 5 -> 4
+[pc=277] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=278] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=9 rC=4
+[pc=279] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=280] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=8
+   r6: 4 -> 5
+[pc=281] 0x90000006 dealloc  A=0 B=0 C=6 | rA=0 rB=0 rC=5
+    dealloc id=5
+[pc=282] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=283] 0x10000195 aidx     A=6 B=2 C=5 | rA=5 rB=2 rC=9
+   r6: 5 -> 4
+[pc=284] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=285] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=8 rC=4
+[pc=286] 0xd8000104 loadimm  A=4 imm=260
+   r4: 266 -> 260
+[pc=287] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=260
+[pc=260] 0xda000008 loadimm  A=5 imm=8
+[pc=261] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=8
+[pc=262] 0xd8000120 loadimm  A=4 imm=288
+   r4: 260 -> 288
+[pc=263] 0xda00010a loadimm  A=5 imm=266
+   r5: 8 -> 266
+[pc=264] 0x0000012e cmov     A=4 B=5 C=6 | rA=288 rB=266 rC=4
+   r4: 288 -> 266
+[pc=265] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=266
+[pc=266] 0xda000008 loadimm  A=5 imm=8
+   r5: 266 -> 8
+[pc=267] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=8
+[pc=268] 0x100001b0 aidx     A=6 B=6 C=0 | rA=4 rB=4 rC=0
+   r6: 4 -> 52
+[pc=269] 0xda000006 loadimm  A=5 imm=6
+   r5: 8 -> 6
+[pc=270] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=52
+[pc=271] 0xda000006 loadimm  A=5 imm=6
+[pc=272] 0x10000195 aidx     A=6 B=2 C=5 | rA=52 rB=2 rC=6
+[pc=273] 0xa0000006 out      A=0 B=0 C=6 | rA=0 rB=0 rC=52
+[pc=274] 0xda000008 loadimm  A=5 imm=8
+   r5: 6 -> 8
+[pc=275] 0x10000195 aidx     A=6 B=2 C=5 | rA=52 rB=2 rC=8
+   r6: 52 -> 4
+[pc=276] 0x100001b1 aidx     A=6 B=6 C=1 | rA=4 rB=4 rC=1
+   r6: 4 -> 3
+[pc=277] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=278] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=9 rC=3
+[pc=279] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=280] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=8
+   r6: 3 -> 4
+[pc=281] 0x90000006 dealloc  A=0 B=0 C=6 | rA=0 rB=0 rC=4
+    dealloc id=4
+[pc=282] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=283] 0x10000195 aidx     A=6 B=2 C=5 | rA=4 rB=2 rC=9
+   r6: 4 -> 3
+[pc=284] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=285] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=8 rC=3
+[pc=286] 0xd8000104 loadimm  A=4 imm=260
+   r4: 266 -> 260
+[pc=287] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=260
+[pc=260] 0xda000008 loadimm  A=5 imm=8
+[pc=261] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=8
+[pc=262] 0xd8000120 loadimm  A=4 imm=288
+   r4: 260 -> 288
+[pc=263] 0xda00010a loadimm  A=5 imm=266
+   r5: 8 -> 266
+[pc=264] 0x0000012e cmov     A=4 B=5 C=6 | rA=288 rB=266 rC=3
+   r4: 288 -> 266
+[pc=265] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=266
+[pc=266] 0xda000008 loadimm  A=5 imm=8
+   r5: 266 -> 8
+[pc=267] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=8
+[pc=268] 0x100001b0 aidx     A=6 B=6 C=0 | rA=3 rB=3 rC=0
+   r6: 3 -> 52
+[pc=269] 0xda000006 loadimm  A=5 imm=6
+   r5: 8 -> 6
+[pc=270] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=6 rC=52
+[pc=271] 0xda000006 loadimm  A=5 imm=6
+[pc=272] 0x10000195 aidx     A=6 B=2 C=5 | rA=52 rB=2 rC=6
+[pc=273] 0xa0000006 out      A=0 B=0 C=6 | rA=0 rB=0 rC=52
+[pc=274] 0xda000008 loadimm  A=5 imm=8
+   r5: 6 -> 8
+[pc=275] 0x10000195 aidx     A=6 B=2 C=5 | rA=52 rB=2 rC=8
+   r6: 52 -> 3
+[pc=276] 0x100001b1 aidx     A=6 B=6 C=1 | rA=3 rB=3 rC=1
+   r6: 3 -> 0
+[pc=277] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=278] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=9 rC=0
+[pc=279] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=280] 0x10000195 aidx     A=6 B=2 C=5 | rA=0 rB=2 rC=8
+   r6: 0 -> 3
+[pc=281] 0x90000006 dealloc  A=0 B=0 C=6 | rA=0 rB=0 rC=3
+    dealloc id=3
+[pc=282] 0xda000009 loadimm  A=5 imm=9
+   r5: 8 -> 9
+[pc=283] 0x10000195 aidx     A=6 B=2 C=5 | rA=3 rB=2 rC=9
+   r6: 3 -> 0
+[pc=284] 0xda000008 loadimm  A=5 imm=8
+   r5: 9 -> 8
+[pc=285] 0x200000ae aupd     A=2 B=5 C=6 | rA=2 rB=8 rC=0
+[pc=286] 0xd8000104 loadimm  A=4 imm=260
+   r4: 266 -> 260
+[pc=287] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=260
+[pc=260] 0xda000008 loadimm  A=5 imm=8
+[pc=261] 0x10000195 aidx     A=6 B=2 C=5 | rA=0 rB=2 rC=8
+[pc=262] 0xd8000120 loadimm  A=4 imm=288
+   r4: 260 -> 288
+[pc=263] 0xda00010a loadimm  A=5 imm=266
+   r5: 8 -> 266
+[pc=264] 0x0000012e cmov     A=4 B=5 C=6 | rA=288 rB=266 rC=0
+[pc=265] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=288
+[pc=288] 0xdc00000a loadimm  A=6 imm=10
+   r6: 0 -> 10
+[pc=289] 0xa0000006 out      A=0 B=0 C=6 | rA=0 rB=0 rC=10
+[pc=290] 0x10000111 aidx     A=4 B=2 C=1 | rA=288 rB=2 rC=1
+   r4: 288 -> 324
+[pc=291] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=324
+[pc=324] 0x10000190 aidx     A=6 B=2 C=0 | rA=10 rB=2 rC=0
+   r6: 10 -> 1
+[pc=325] 0x90000002 dealloc  A=0 B=0 C=2 | rA=0 rB=0 rC=2
+    dealloc id=2
+[pc=326] 0x000000b1 cmov     A=2 B=6 C=1 | rA=2 rB=1 rC=1
+   r2: 2 -> 1
+[pc=327] 0x10000111 aidx     A=4 B=2 C=1 | rA=324 rB=1 rC=1
+   r4: 324 -> 8
+[pc=328] 0xc0000004 loadprog A=0 B=0 C=4 | rA=0 rB=0 rC=8
+[pc=8] 0x70000000 halt     A=0 B=0 C=0 | rA=0 rB=0 rC=0
