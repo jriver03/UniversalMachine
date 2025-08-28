@@ -1,15 +1,1 @@
-[pc=0] 0xd0000048 loadimm  A=0 imm=72
-   r0: 0 -> 72
-[pc=1] 0xa0000000 out      A=0 B=0 C=0 | rA=72 rB=72 rC=72
-[pc=2] 0xd0000065 loadimm  A=0 imm=101
-   r0: 72 -> 101
-[pc=3] 0xa0000000 out      A=0 B=0 C=0 | rA=101 rB=101 rC=101
-[pc=4] 0xd000006c loadimm  A=0 imm=108
-   r0: 101 -> 108
-[pc=5] 0xa0000000 out      A=0 B=0 C=0 | rA=108 rB=108 rC=108
-[pc=6] 0xd000006c loadimm  A=0 imm=108
-[pc=7] 0xa0000000 out      A=0 B=0 C=0 | rA=108 rB=108 rC=108
-[pc=8] 0xd000006f loadimm  A=0 imm=111
-   r0: 108 -> 111
-[pc=9] 0xa0000000 out      A=0 B=0 C=0 | rA=111 rB=111 rC=111
-[trace disabled after pc=10]
+-bash: ./BULD/loader: No such file or directory
