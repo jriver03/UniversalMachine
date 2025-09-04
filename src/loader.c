@@ -39,6 +39,10 @@
 #include <errno.h>
 #include <string.h>
 
+#include "trace.h"
+#ifdef TRACE
+int g_trace_enabled = 0;
+#endif
 /*-------------- tiny utils --------------- */ 
 
 /* simple fatal helper for non-VM errors (I/O, OOM during load, etc.) */
@@ -98,6 +102,7 @@ static inline unsigned LI_A(uint32_t w) { return (w >> 25) & 7u; } // bits 25..2
 static inline unsigned LI_VAL(uint32_t w) {return w & 0x1FFFFFFu; } // bits 0..24
 
 /* pretty names for trace */
+#ifdef TRACE
 static const char *opname(unsigned op) {
     switch (op) {
         case 0: return "cmov";
@@ -117,6 +122,7 @@ static const char *opname(unsigned op) {
         default: return "?";
     }
 }
+#endif
 
 /*--------------------------- array registry (“heap”) --------------------------*/
 typedef struct {
@@ -217,17 +223,42 @@ static void fail_and_exit(const char *msg) {
 }
 
 /* print register deltas for trace (only if any changed) */
+#ifdef TRACE
 static void dump_reg_changes(uint32_t before[8], uint32_t after[8]) {
     for (int i = 0; i < 8; ++i) {
         if(before[i] != after[i]) {
-            fprintf(stderr, "   r%d: %u -> %u\n", i, before[i], after[i]);
+            TRACEF("   r%d: %u -> %u\n", i, before[i], after[i]);
+        }
+    }
+}
+#endif
+
+/* Swallow --trace/-t on the commandline */
+static void parse_trace_flag(int *argc, char ***argv) {
+    for (int i = 1; i < *argc; ++i) {
+        const char *arg = (*argv)[i];
+        if (strcmp(arg, "--trace") == 0 || strcmp(arg, "-t") == 0) {
+            #ifdef TRACE
+                g_trace_enabled = 1;
+            #endif
+                //remove the arg from argv and continue scanning
+                memmove(&(*argv)[i], &(*argv)[i + 1], (size_t)((*argc) - i - 1) * sizeof(char *));
+                --(*argc);
+                --i;
         }
     }
 }
 
 /*------------------------------------ main -----------------------------------*/
 int main(int argc, char **argv) {
-    int trace = 0;
+    parse_trace_flag(&argc, &argv);
+
+    #ifdef TRACE
+        int trace_on = 0;
+        trace_on = g_trace_enabled;
+        if (trace_on) setvbuf(stderr, NULL, _IONBF, 0);
+    #endif
+
     int argi = 1;
 
     // -h / --help (accept anywhere for convenience)
@@ -238,21 +269,13 @@ int main(int argc, char **argv) {
         }
     }
 
-    // optional --trace flag
-    if (argc >= 2 && strcmp(argv[argi], "--trace")==0) {
-        trace = 1;
-        ++argi;
-        setvbuf(stderr, NULL, _IONBF, 0); // unbuffered stderr for nicer trace
-    }
-
-    // optional trace limit via env var
+    #ifdef TRACE
     unsigned trace_limit = 0;
-    if (trace) {
+    if (trace_on) {
         const char *lim = getenv("UM_TRACE_LIMIT");
-        if (lim && *lim) {
-            trace_limit = (unsigned)strtoul(lim, NULL, 0);
-        }
+        if (lim && *lim) trace_limit = (unsigned)strtoul(lim, NULL, 0);
     }
+    #endif
 
     // exactly one positional argument is required at this point
     if (argc - argi != 1) {
@@ -323,6 +346,10 @@ int main(int argc, char **argv) {
     // boot machine arrays: id 0 = program
     arrays_boot(words, nwords);
 
+    // Cache array-0 program for fast fetch/bounds
+    uint32_t *code0 = g_arr[0].data;
+    size_t code0_len = g_arr[0].len;
+
     /*------------------------------ VM registers ----------------------------*/
     uint32_t regs[8] = {0}; // 8 general-purpose registers
     uint32_t pc = 0; // Program counter starts at 0
@@ -330,34 +357,42 @@ int main(int argc, char **argv) {
     /* --------------------- fetch / decode / execute loop -------------------*/
     for (;;) {
         // stop tracing after pc >= limit (if set)
-        if (trace && trace_limit && pc >= trace_limit) {
+        #ifdef TRACE
+        if (trace_on && trace_limit && pc >= trace_limit) {
             fprintf(stderr, "[trace disabled after pc=%u]\n", pc);
-            trace = 0;
+            g_trace_enabled = 0;
+            trace_on = 0;
         }
+        #endif
         // Exception: if at cycle start PC outside 0-array capacity is a Fail
-        if (pc >= g_arr[0].len) {
+        if ((uint32_t)pc >= code0_len) {
             fail_and_exit("PC out of bounds at cycle start");
         }
 
-        uint32_t w = g_arr[0].data[pc];
+        uint32_t w = code0[pc];
         unsigned op =  OPC(w);
         
-        uint32_t before[8];
-        if (trace) {
-            memcpy(before, regs, sizeof before);
-        }
+        #ifdef TRACE
+            uint32_t before[8];
+
+            if (trace_on) memcpy(before, regs, sizeof before);
+        #endif
 
         // per instruction trace
-        if (trace) {
+        #ifdef TRACE
+        if (trace_on) {
             if (op == 13u) {
-                fprintf(stderr, "[pc=%u] 0x%08x %-8s A=%u imm=%u\n",
-                pc, w, opname(op), LI_A(w), LI_VAL(w));
+                unsigned A = LI_A(w);
+                uint32_t imm25 = LI_VAL(w);
+                TRACEF("[pc=%u] 0x%08x %-8s A=%u imm=%u\n",
+                pc, w, opname(op), A, imm25);
             } else {
-                fprintf(stderr, "[pc=%u] 0x%08x %-8s A=%u B=%u C=%u | rA=%u rB=%u rC=%u\n",
-                pc, w, opname(op), ABC_A(w), ABC_B(w), ABC_C(w), (unsigned)regs[ABC_A(w)],
-                (unsigned)regs[ABC_B(w)], (unsigned)regs[ABC_C(w)]);
+                unsigned A = ABC_A(w), B = ABC_B(w), C = ABC_C(w);
+                TRACEF("[pc=%u] 0x%08x %-8s A=%u B=%u C=%u | rA=%u rB=%u rC=%u\n",
+                pc, w, opname(op), A, B, C, (unsigned)regs[A], (unsigned)regs[B], (unsigned)regs[C]);
             }
         }
+        #endif
 
         // 13. Load Immediate: uses special fields
         if (op == 13u) {
@@ -456,7 +491,7 @@ int main(int argc, char **argv) {
                     uint32_t id = id_acquire();
 
                     if (id == 0) fail_and_exit("alloc: id 0 reserved");
-                    if (trace) fprintf(stderr, "    alloc -> id=%u, len=%u\n", id, (unsigned)n);
+                    TRACEF("    alloc -> id=%u, len=%u\n", id, (unsigned)n);
 
                     g_arr[id].data = data;
                     g_arr[id].len = n;
@@ -475,7 +510,7 @@ int main(int argc, char **argv) {
                         fail_and_exit("dealloc: invalid or inactive id");
                     }
 
-                    if (trace) fprintf(stderr, "    dealloc id=%u\n", id);
+                    TRACEF("    dealloc id=%u\n", id);
 
                     free(g_arr[id].data);
                 
@@ -497,7 +532,10 @@ int main(int argc, char **argv) {
                     }
 
                     putchar((int)(v & 0xFF));
-                    fflush(stdout);
+                    #ifdef TRACE
+                        if (g_trace_enabled) fflush(stdout);
+                    #endif
+                    
                     pc++;
                     break;
                 }
@@ -539,6 +577,10 @@ int main(int argc, char **argv) {
                         g_arr[0].data = dup;
                         g_arr[0].len = n;
                         g_arr[0].active = 1;
+
+                        // refresh cached program view
+                        code0 = g_arr[0].data;
+                        code0_len = g_arr[0].len;
                     }
                     // jump: set pc = C (no increment)
                     pc = new_pc;
@@ -550,6 +592,8 @@ int main(int argc, char **argv) {
             }
         }
         // per instruction register deltas
-        if (trace) dump_reg_changes(before, regs);
+        #ifdef TRACE
+            if (trace_on) dump_reg_changes(before, regs);
+        #endif
     }
 }

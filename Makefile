@@ -6,16 +6,23 @@ ASM = asm
 
 WARN = -Wall -Wextra -Wshadow
 
-DBGFLAGS = -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer
+DBGFLAGS = -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer -DTRACE
 RELFLAGS = -std=c17 -O3 -DNDEBUG
 PERFFLAG = -flto
 
-CFLAGS_COMMON = $(WARN)
+CFLAGS_COMMON = $(WARN) -Iinclude
+CFLAGS_BASE = -std=c17 -Wall -Wextra
+CFLAGS_DBG = $(CFLAGS_BASE) -O0 -g -DTRACE
+CFLAGS_PERF = $(CFLAGS_BASE) -O3 -DNDEBUG -fomit-frame-pointer -march=native
 LDFLAGS_COMMON = 
+LDFLAGS_PERF = -flto
 
-SRC_DIR = src
 BUILD = BUILD
+
+SRC_LOADER = src/loader.c
+SRC_DIR = src
 SRCS = $(SRC_DIR)/loader.c
+
 OBJS = $(BUILD)/loader.o
 DEPS = $(OBJS:.o=.d)
 
@@ -63,9 +70,18 @@ $(BUILD)/$(ASM): $(ASM_OBJS) | $(BUILD)
 $(BUILD):
 	mkdir -p $(BUILD)
 
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
 # Debug objects
 $(BUILD)/%.o: $(SRC_DIR)/%.c | $(BUILD)
 	$(CC) $(CFLAGS_COMMON) $(DBGFLAGS) -MMD -MP -c $< -o $@
+
+$(BUILD_DIR)/loader: $(SRC_LOADER) | $(BUILD_DIR)
+	$(CC) $(CFLAGS_DBG) $^ -o $@
+
+$(BUILD_DIR)/loader-perf: $(SRC_LOADER) | $(BUILD_DIR)
+	$(CC) $(CFLAGS_PERF) $^ -o $@ $(LDFLAGS_PERF)
 
 # Release/perf variants reuse same source
 $(BUILD)/%-rel.o: $(SRC_DIR)/%.c | $(BUILD)

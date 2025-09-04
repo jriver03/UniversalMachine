@@ -1,0 +1,893 @@
+jriver03@b146-46:~/um-emulator$ make clean
+rm -rf BUILD
+
+jriver03@b146-46:~/um-emulator$ make perf
+mkdir -p BUILD
+cc -Wall -Wextra -Wshadow -std=c17 -O3 -DNDEBUG -flto -MMD -MP -c src/loader.c -o BUILD/loader-perf.o
+cc -Wall -Wextra -Wshadow -std=c17 -O3 -DNDEBUG  -flto -o BUILD/loader-perf BUILD/loader-perf.o
+
+jriver03@b146-46:~/um-emulator$ make
+cc -Wall -Wextra -Wshadow -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer -MMD -MP -c src/loader.c -o BUILD/loader.o
+cc -Wall -Wextra -Wshadow -std=c17 -O0 -g -fsanitize=address,undefined -fno-omit-frame-pointer  -o BUILD/loader BUILD/loader.o
+
+jriver03@b146-46:~/um-emulator$ ./loader programs/helloworld.um
+Hello world!
+
+jriver03@b146-46:~/um-emulator$ head -n1 out/helloworld.out
+Hello world!
+
+jriver03@b146-46:~/um-emulator$ head -n6 traces/helloworld.trace
+[pc=0] 0xd0000048 loadimm  A=0 imm=72
+   r0: 0 -> 72
+[pc=1] 0xa0000000 out      A=0 B=0 C=0 | rA=72 rB=72 rC=72
+[pc=2] 0xd0000065 loadimm  A=0 imm=101
+   r0: 72 -> 101
+[pc=3] 0xa0000000 out      A=0 B=0 C=0 | rA=101 rB=101 rC=101
+
+jriver03@b146-46:~/um-emulator$ printf "12\n" | ./loader programs/square.um
+144
+
+jriver03@b146-46:~/um-emulator$ tail -n1 out/square_12.out
+144
+
+jriver03@b146-46:~/um-emulator$ ./loader programs/sandmark.um
+trying to Allocate array of size 0..
+trying to Abandon size 0 allocation..
+trying to Allocate size 11..
+trying Array Index on allocated array..
+trying Amendment of allocated array..
+checking Amendment of allocated array..
+trying Alloc(a,a) and amending it..
+comparing multiple allocations..
+pointer arithmetic..
+check old allocation..
+simple tests ok!
+about to load program from some allocated array..
+success.
+verifying that the array and its copy are the same...
+success.
+testing aliasing..
+success.
+free after loadprog..
+success.
+loadprog ok.
+ == SANDmark 19106 beginning stress test / benchmark.. ==
+100. 12345678.09abcdef
+99.  6d58165c.2948d58d
+98.  0f63b9ed.1d9c4076
+97.  8dba0fc0.64af8685
+96.  583e02ae.490775c0
+95.  0353a77b.2f02685c
+94.  aa25a8d7.51cb07e5
+93.  e13149f5.53a9ae5d
+92.  abbbd460.86cf279c
+91.  2c25e8d8.a71883a9
+90.  dccf7b71.475e0715
+89.  49b398a7.f293a13d
+88.  9116f443.2d29be37
+87.  5c79ba31.71e7e592
+86.  19537c73.0797380a
+85.  f46a7339.fe37b85a
+84.  99c71532.729e2864
+83.  f3455289.b84ced3d
+82.  c90c81a9.b66fcd61
+81.  087e9eef.fc1c13a6
+80.  e933e2f5.3567082f
+79.  25af849e.16290d7b
+78.  57af9504.c76e7ded
+77.  68cf6c69.6055d00c
+76.  8e920fbd.02369722
+75.  eb06e2de.03c46fda
+74.  f9c40240.f1290b2a
+73.  7f484f97.bc15610b
+72.  1dabb00e.61e7b75b
+71.  dceb40f5.207a75ca
+70.  c3ed44f5.db631e81
+69.  b7addb67.90460bf5
+68.  ae710a90.04b433ef
+67.  9ca2d5f0.05d3b631
+66.  4f38abe0.4287cc05
+65.  10d8691d.a5c934f8
+64.  27c68255.52881eaa
+63.  a0695283.110266b7
+62.  336aa5dd.57287a9b
+61.  b04fe494.d741ddbd
+60.  2baf3654.9e33305a
+59.  fd82095d.683efb19
+58.  d0bac37f.badff9d7
+57.  3be33fcc.d76b127e
+56.  7f964f18.8b118ee1
+55.  37aeddc8.26a8f840
+54.  d71d55ff.6994c78f
+53.  bf175396.f960cc54
+52.  f6c9d8e1.44b81fd5
+51.  6a9b4d86.fe7c66cb
+50.  06bceb64.d5106aad
+49.  237183b6.49c15b01
+48.  4ec10756.6936136f
+47.  9d1855a7.1e929fe8
+46.  a641ede3.36bff422
+45.  7bbf5ad4.dd129538
+44.  732b385e.39fadce7
+43.  b7f50285.e7f54c39
+42.  42e3754c.da741dc1
+41.  5dc42265.928ea0bb
+40.  623fb352.3f25bc5b
+39.  491f33d9.409bca87
+38.  f0943bc7.89f512be
+37.  80cdbc9d.8ad93517
+36.  c1a8da99.32d37f3f
+35.  91a0b15c.6df2cf4e
+34.  50cf7a7a.f0466dc8
+33.  02df4c13.14eb615d
+32.  2963bf25.d9f06dfe
+31.  c493d2db.f39ce804
+30.  3b6e5a8e.5cf63bd7
+29.  4c5c2fbe.8d881c00
+28.  9b7354a6.81181438
+27.  ae0fe8c6.ec436274
+26.  e786b98d.f5a4111d
+25.  a7719df1.d989d0b6
+24.  beb9ebc0.6c56750d
+23.  edf41fcb.e4cba003
+22.  97268c46.713025f1
+21.  deb087db.1349eb6a
+20.  fc5221f0.3b4241bf
+19.  3fa4370d.8fa16752
+18.  044af7de.87b44b11
+17.  2e86e437.c4cdbc54
+16.  fd7cd8aa.63b6ca23
+15.  631ceaad.e093a9d5
+14.  01ca9732.52962532
+13.  86d8bcf5.45bdf474
+12.  8d07855b.0224e80f
+11.  0f9d2bee.94d86c38
+10.  5e6a685d.26597494
+9.   24825ea1.72008775
+8.   73f9c0b5.1480e7a3
+7.   a30735ec.a49b5dad
+6.   a7b6666b.509e5338
+5.   d0e8236e.8b0e9826
+4.   4d20f3ac.a25d05a8
+3.   7c7394b2.476c1ee5
+2.   f3a52453.19cc755d
+1.   2c80b43d.5646302f
+0.   a8d1619e.5540e6cf
+SANDmark complete.
+real 16.75
+user 16.63
+sys 0.00
+
+jriver03@b146-46:~/um-emulator$ ./disasm programs/helloworld.um
+;; [pc=0 word=0xd0000048]
+loadimm 0 72
+;; [pc=1 word=0xa0000000]
+out 0
+;; [pc=2 word=0xd0000065]
+loadimm 0 101
+;; [pc=3 word=0xa0000000]
+out 0
+;; [pc=4 word=0xd000006c]
+loadimm 0 108
+;; [pc=5 word=0xa0000000]
+out 0
+;; [pc=6 word=0xd000006c]
+loadimm 0 108
+;; [pc=7 word=0xa0000000]
+out 0
+;; [pc=8 word=0xd000006f]
+loadimm 0 111
+;; [pc=9 word=0xa0000000]
+out 0
+;; [pc=10 word=0xd0000020]
+loadimm 0 32
+;; [pc=11 word=0xa0000000]
+out 0
+;; [pc=12 word=0xd0000077]
+loadimm 0 119
+;; [pc=13 word=0xa0000000]
+out 0
+;; [pc=14 word=0xd000006f]
+loadimm 0 111
+;; [pc=15 word=0xa0000000]
+out 0
+;; [pc=16 word=0xd0000072]
+loadimm 0 114
+;; [pc=17 word=0xa0000000]
+out 0
+;; [pc=18 word=0xd000006c]
+loadimm 0 108
+;; [pc=19 word=0xa0000000]
+out 0
+;; [pc=20 word=0xd0000064]
+loadimm 0 100
+;; [pc=21 word=0xa0000000]
+out 0
+;; [pc=22 word=0xd0000021]
+loadimm 0 33
+;; [pc=23 word=0xa0000000]
+out 0
+;; [pc=24 word=0xd000000a]
+loadimm 0 10
+;; [pc=25 word=0xa0000000]
+out 0
+;; [pc=26 word=0x70000000]
+halt
+
+jriver03@b146-46:~/um-emulator$ ./disasm programs/square.um
+;; [pc=0 word=0xd0000000]
+loadimm 0 0
+;; [pc=1 word=0xd2000001]
+loadimm 1 1
+;; [pc=2 word=0xda000004]
+loadimm 5 4
+;; [pc=3 word=0x80000015]
+alloc 2 5
+;; [pc=4 word=0xde000008]
+loadimm 7 8
+;; [pc=5 word=0x2000008f]
+aupd 2 1 7
+;; [pc=6 word=0xd8000124]
+loadimm 4 292
+;; [pc=7 word=0xc0000004]
+loadprog 0 4
+;; [pc=8 word=0x70000000]
+halt
+;; [pc=9 word=0xdc000003]
+loadimm 6 3
+;; [pc=10 word=0x10000196]
+aidx 6 2 6
+;; [pc=11 word=0x600001b6]
+nand 6 6 6
+;; [pc=12 word=0x300001b1]
+add 6 6 1
+;; [pc=13 word=0xde000002]
+loadimm 7 2
+;; [pc=14 word=0x100001d7]
+aidx 7 2 7
+;; [pc=15 word=0x300001b7]
+add 6 6 7
+;; [pc=16 word=0xde000004]
+loadimm 7 4
+;; [pc=17 word=0x200000be]
+aupd 2 7 6
+;; [pc=18 word=0x10000111]
+aidx 4 2 1
+;; [pc=19 word=0xc0000004]
+loadprog 0 4
+;; [pc=20 word=0xda000005]
+loadimm 5 5
+;; [pc=21 word=0x80000035]
+alloc 6 5
+;; [pc=22 word=0x20000182]
+aupd 6 0 2
+;; [pc=23 word=0xde000024]
+loadimm 7 36
+;; [pc=24 word=0x2000018f]
+aupd 6 1 7
+;; [pc=25 word=0xda000002]
+loadimm 5 2
+;; [pc=26 word=0x100001d5]
+aidx 7 2 5
+;; [pc=27 word=0xda000002]
+loadimm 5 2
+;; [pc=28 word=0x200001af]
+aupd 6 5 7
+;; [pc=29 word=0xda000003]
+loadimm 5 3
+;; [pc=30 word=0x100001d5]
+aidx 7 2 5
+;; [pc=31 word=0xda000003]
+loadimm 5 3
+;; [pc=32 word=0x200001af]
+aupd 6 5 7
+;; [pc=33 word=0xd8000009]
+loadimm 4 9
+;; [pc=34 word=0x000000b1]
+cmov 2 6 1
+;; [pc=35 word=0xc0000004]
+loadprog 0 4
+;; [pc=36 word=0x10000190]
+aidx 6 2 0
+;; [pc=37 word=0xde000004]
+loadimm 7 4
+;; [pc=38 word=0x100001d7]
+aidx 7 2 7
+;; [pc=39 word=0x90000002]
+dealloc 2
+;; [pc=40 word=0x000000b1]
+cmov 2 6 1
+;; [pc=41 word=0x00000189]
+cmov 6 1 1
+;; [pc=42 word=0x00000187]
+cmov 6 0 7
+;; [pc=43 word=0xde000004]
+loadimm 7 4
+;; [pc=44 word=0x200000be]
+aupd 2 7 6
+;; [pc=45 word=0x10000111]
+aidx 4 2 1
+;; [pc=46 word=0xc0000004]
+loadprog 0 4
+;; [pc=47 word=0xda000003]
+loadimm 5 3
+;; [pc=48 word=0x200000a8]
+aupd 2 5 0
+;; [pc=49 word=0xb0000006]
+in 6
+;; [pc=50 word=0xda000004]
+loadimm 5 4
+;; [pc=51 word=0x200000ae]
+aupd 2 5 6
+;; [pc=52 word=0xda000005]
+loadimm 5 5
+;; [pc=53 word=0x80000035]
+alloc 6 5
+;; [pc=54 word=0x20000182]
+aupd 6 0 2
+;; [pc=55 word=0xde000043]
+loadimm 7 67
+;; [pc=56 word=0x2000018f]
+aupd 6 1 7
+;; [pc=57 word=0xda000004]
+loadimm 5 4
+;; [pc=58 word=0x100001d5]
+aidx 7 2 5
+;; [pc=59 word=0xda000002]
+loadimm 5 2
+;; [pc=60 word=0x200001af]
+aupd 6 5 7
+;; [pc=61 word=0xde00000a]
+loadimm 7 10
+;; [pc=62 word=0xda000003]
+loadimm 5 3
+;; [pc=63 word=0x200001af]
+aupd 6 5 7
+;; [pc=64 word=0xd8000014]
+loadimm 4 20
+;; [pc=65 word=0x000000b1]
+cmov 2 6 1
+;; [pc=66 word=0xc0000004]
+loadprog 0 4
+;; [pc=67 word=0x10000190]
+aidx 6 2 0
+;; [pc=68 word=0xda000004]
+loadimm 5 4
+;; [pc=69 word=0x100001d5]
+aidx 7 2 5
+;; [pc=70 word=0xda000005]
+loadimm 5 5
+;; [pc=71 word=0x200001af]
+aupd 6 5 7
+;; [pc=72 word=0x90000002]
+dealloc 2
+;; [pc=73 word=0x000000b1]
+cmov 2 6 1
+;; [pc=74 word=0xda000005]
+loadimm 5 5
+;; [pc=75 word=0x100001d5]
+aidx 7 2 5
+;; [pc=76 word=0xd8000050]
+loadimm 4 80
+;; [pc=77 word=0xda000075]
+loadimm 5 117
+;; [pc=78 word=0x0000012f]
+cmov 4 5 7
+;; [pc=79 word=0xc0000004]
+loadprog 0 4
+;; [pc=80 word=0xda000003]
+loadimm 5 3
+;; [pc=81 word=0x10000195]
+aidx 6 2 5
+;; [pc=82 word=0xde00000a]
+loadimm 7 10
+;; [pc=83 word=0x400001b7]
+mul 6 6 7
+;; [pc=84 word=0xda000006]
+loadimm 5 6
+;; [pc=85 word=0x200000ae]
+aupd 2 5 6
+;; [pc=86 word=0xda000005]
+loadimm 5 5
+;; [pc=87 word=0x80000035]
+alloc 6 5
+;; [pc=88 word=0x20000182]
+aupd 6 0 2
+;; [pc=89 word=0xde000065]
+loadimm 7 101
+;; [pc=90 word=0x2000018f]
+aupd 6 1 7
+;; [pc=91 word=0xda000004]
+loadimm 5 4
+;; [pc=92 word=0x100001d5]
+aidx 7 2 5
+;; [pc=93 word=0xda000002]
+loadimm 5 2
+;; [pc=94 word=0x200001af]
+aupd 6 5 7
+;; [pc=95 word=0xde000030]
+loadimm 7 48
+;; [pc=96 word=0xda000003]
+loadimm 5 3
+;; [pc=97 word=0x200001af]
+aupd 6 5 7
+;; [pc=98 word=0xd8000009]
+loadimm 4 9
+;; [pc=99 word=0x000000b1]
+cmov 2 6 1
+;; [pc=100 word=0xc0000004]
+loadprog 0 4
+;; [pc=101 word=0x10000190]
+aidx 6 2 0
+;; [pc=102 word=0xda000004]
+loadimm 5 4
+;; [pc=103 word=0x100001d5]
+aidx 7 2 5
+;; [pc=104 word=0xda000007]
+loadimm 5 7
+;; [pc=105 word=0x200001af]
+aupd 6 5 7
+;; [pc=106 word=0x90000002]
+dealloc 2
+;; [pc=107 word=0x000000b1]
+cmov 2 6 1
+;; [pc=108 word=0xda000006]
+loadimm 5 6
+;; [pc=109 word=0x10000195]
+aidx 6 2 5
+;; [pc=110 word=0xda000007]
+loadimm 5 7
+;; [pc=111 word=0x100001d5]
+aidx 7 2 5
+;; [pc=112 word=0x300001b7]
+add 6 6 7
+;; [pc=113 word=0xda000003]
+loadimm 5 3
+;; [pc=114 word=0x200000ae]
+aupd 2 5 6
+;; [pc=115 word=0xd8000031]
+loadimm 4 49
+;; [pc=116 word=0xc0000004]
+loadprog 0 4
+;; [pc=117 word=0xda000003]
+loadimm 5 3
+;; [pc=118 word=0x10000195]
+aidx 6 2 5
+;; [pc=119 word=0xda000002]
+loadimm 5 2
+;; [pc=120 word=0x200000ae]
+aupd 2 5 6
+;; [pc=121 word=0x10000111]
+aidx 4 2 1
+;; [pc=122 word=0xc0000004]
+loadprog 0 4
+;; [pc=123 word=0xda000002]
+loadimm 5 2
+;; [pc=124 word=0x10000195]
+aidx 6 2 5
+;; [pc=125 word=0xda000003]
+loadimm 5 3
+;; [pc=126 word=0x200000ae]
+aupd 2 5 6
+;; [pc=127 word=0xda000003]
+loadimm 5 3
+;; [pc=128 word=0x10000195]
+aidx 6 2 5
+;; [pc=129 word=0xde00000a]
+loadimm 7 10
+;; [pc=130 word=0x500001b7]
+div 6 6 7
+;; [pc=131 word=0xda000004]
+loadimm 5 4
+;; [pc=132 word=0x200000ae]
+aupd 2 5 6
+;; [pc=133 word=0xda000004]
+loadimm 5 4
+;; [pc=134 word=0x10000195]
+aidx 6 2 5
+;; [pc=135 word=0xde00000a]
+loadimm 7 10
+;; [pc=136 word=0x400001b7]
+mul 6 6 7
+;; [pc=137 word=0xda000007]
+loadimm 5 7
+;; [pc=138 word=0x200000ae]
+aupd 2 5 6
+;; [pc=139 word=0xda000005]
+loadimm 5 5
+;; [pc=140 word=0x80000035]
+alloc 6 5
+;; [pc=141 word=0x20000182]
+aupd 6 0 2
+;; [pc=142 word=0xde00009b]
+loadimm 7 155
+;; [pc=143 word=0x2000018f]
+aupd 6 1 7
+;; [pc=144 word=0xda000003]
+loadimm 5 3
+;; [pc=145 word=0x100001d5]
+aidx 7 2 5
+;; [pc=146 word=0xda000002]
+loadimm 5 2
+;; [pc=147 word=0x200001af]
+aupd 6 5 7
+;; [pc=148 word=0xda000007]
+loadimm 5 7
+;; [pc=149 word=0x100001d5]
+aidx 7 2 5
+;; [pc=150 word=0xda000003]
+loadimm 5 3
+;; [pc=151 word=0x200001af]
+aupd 6 5 7
+;; [pc=152 word=0xd8000009]
+loadimm 4 9
+;; [pc=153 word=0x000000b1]
+cmov 2 6 1
+;; [pc=154 word=0xc0000004]
+loadprog 0 4
+;; [pc=155 word=0x10000190]
+aidx 6 2 0
+;; [pc=156 word=0xda000004]
+loadimm 5 4
+;; [pc=157 word=0x100001d5]
+aidx 7 2 5
+;; [pc=158 word=0xda000005]
+loadimm 5 5
+;; [pc=159 word=0x200001af]
+aupd 6 5 7
+;; [pc=160 word=0x90000002]
+dealloc 2
+;; [pc=161 word=0x000000b1]
+cmov 2 6 1
+;; [pc=162 word=0xda000005]
+loadimm 5 5
+;; [pc=163 word=0x10000195]
+aidx 6 2 5
+;; [pc=164 word=0xde000030]
+loadimm 7 48
+;; [pc=165 word=0x300001b7]
+add 6 6 7
+;; [pc=166 word=0xda000006]
+loadimm 5 6
+;; [pc=167 word=0x200000ae]
+aupd 2 5 6
+;; [pc=168 word=0xda000006]
+loadimm 5 6
+;; [pc=169 word=0x10000195]
+aidx 6 2 5
+;; [pc=170 word=0xa0000006]
+out 6
+;; [pc=171 word=0xda000004]
+loadimm 5 4
+;; [pc=172 word=0x10000195]
+aidx 6 2 5
+;; [pc=173 word=0xda000003]
+loadimm 5 3
+;; [pc=174 word=0x200000ae]
+aupd 2 5 6
+;; [pc=175 word=0xda000003]
+loadimm 5 3
+;; [pc=176 word=0x10000195]
+aidx 6 2 5
+;; [pc=177 word=0xd80000b5]
+loadimm 4 181
+;; [pc=178 word=0xda00007f]
+loadimm 5 127
+;; [pc=179 word=0x0000012e]
+cmov 4 5 6
+;; [pc=180 word=0xc0000004]
+loadprog 0 4
+;; [pc=181 word=0xdc00000a]
+loadimm 6 10
+;; [pc=182 word=0xa0000006]
+out 6
+;; [pc=183 word=0x10000111]
+aidx 4 2 1
+;; [pc=184 word=0xc0000004]
+loadprog 0 4
+;; [pc=185 word=0xda000008]
+loadimm 5 8
+;; [pc=186 word=0x200000a8]
+aupd 2 5 0
+;; [pc=187 word=0xda000002]
+loadimm 5 2
+;; [pc=188 word=0x10000195]
+aidx 6 2 5
+;; [pc=189 word=0xda000003]
+loadimm 5 3
+;; [pc=190 word=0x200000ae]
+aupd 2 5 6
+;; [pc=191 word=0xda000003]
+loadimm 5 3
+;; [pc=192 word=0x10000195]
+aidx 6 2 5
+;; [pc=193 word=0xde00000a]
+loadimm 7 10
+;; [pc=194 word=0x500001b7]
+div 6 6 7
+;; [pc=195 word=0xda000004]
+loadimm 5 4
+;; [pc=196 word=0x200000ae]
+aupd 2 5 6
+;; [pc=197 word=0xda000004]
+loadimm 5 4
+;; [pc=198 word=0x10000195]
+aidx 6 2 5
+;; [pc=199 word=0xde00000a]
+loadimm 7 10
+;; [pc=200 word=0x400001b7]
+mul 6 6 7
+;; [pc=201 word=0xda000007]
+loadimm 5 7
+;; [pc=202 word=0x200000ae]
+aupd 2 5 6
+;; [pc=203 word=0xda000005]
+loadimm 5 5
+;; [pc=204 word=0x80000035]
+alloc 6 5
+;; [pc=205 word=0x20000182]
+aupd 6 0 2
+;; [pc=206 word=0xde0000db]
+loadimm 7 219
+;; [pc=207 word=0x2000018f]
+aupd 6 1 7
+;; [pc=208 word=0xda000003]
+loadimm 5 3
+;; [pc=209 word=0x100001d5]
+aidx 7 2 5
+;; [pc=210 word=0xda000002]
+loadimm 5 2
+;; [pc=211 word=0x200001af]
+aupd 6 5 7
+;; [pc=212 word=0xda000007]
+loadimm 5 7
+;; [pc=213 word=0x100001d5]
+aidx 7 2 5
+;; [pc=214 word=0xda000003]
+loadimm 5 3
+;; [pc=215 word=0x200001af]
+aupd 6 5 7
+;; [pc=216 word=0xd8000009]
+loadimm 4 9
+;; [pc=217 word=0x000000b1]
+cmov 2 6 1
+;; [pc=218 word=0xc0000004]
+loadprog 0 4
+;; [pc=219 word=0x10000190]
+aidx 6 2 0
+;; [pc=220 word=0xda000004]
+loadimm 5 4
+;; [pc=221 word=0x100001d5]
+aidx 7 2 5
+;; [pc=222 word=0xda000005]
+loadimm 5 5
+;; [pc=223 word=0x200001af]
+aupd 6 5 7
+;; [pc=224 word=0x90000002]
+dealloc 2
+;; [pc=225 word=0x000000b1]
+cmov 2 6 1
+;; [pc=226 word=0xda000005]
+loadimm 5 5
+;; [pc=227 word=0x10000195]
+aidx 6 2 5
+;; [pc=228 word=0xde000030]
+loadimm 7 48
+;; [pc=229 word=0x300001b7]
+add 6 6 7
+;; [pc=230 word=0xda000006]
+loadimm 5 6
+;; [pc=231 word=0x200000ae]
+aupd 2 5 6
+;; [pc=232 word=0xdc000002]
+loadimm 6 2
+;; [pc=233 word=0x80000036]
+alloc 6 6
+;; [pc=234 word=0xda000009]
+loadimm 5 9
+;; [pc=235 word=0x200000ae]
+aupd 2 5 6
+;; [pc=236 word=0xda000006]
+loadimm 5 6
+;; [pc=237 word=0x10000195]
+aidx 6 2 5
+;; [pc=238 word=0xda000009]
+loadimm 5 9
+;; [pc=239 word=0x100001d5]
+aidx 7 2 5
+;; [pc=240 word=0x200001c6]
+aupd 7 0 6
+;; [pc=241 word=0xda000008]
+loadimm 5 8
+;; [pc=242 word=0x10000195]
+aidx 6 2 5
+;; [pc=243 word=0xda000009]
+loadimm 5 9
+;; [pc=244 word=0x100001d5]
+aidx 7 2 5
+;; [pc=245 word=0x200001ce]
+aupd 7 1 6
+;; [pc=246 word=0xda000009]
+loadimm 5 9
+;; [pc=247 word=0x10000195]
+aidx 6 2 5
+;; [pc=248 word=0xda000008]
+loadimm 5 8
+;; [pc=249 word=0x200000ae]
+aupd 2 5 6
+;; [pc=250 word=0xda000004]
+loadimm 5 4
+;; [pc=251 word=0x10000195]
+aidx 6 2 5
+;; [pc=252 word=0xda000003]
+loadimm 5 3
+;; [pc=253 word=0x200000ae]
+aupd 2 5 6
+;; [pc=254 word=0xda000003]
+loadimm 5 3
+;; [pc=255 word=0x10000195]
+aidx 6 2 5
+;; [pc=256 word=0xd8000104]
+loadimm 4 260
+;; [pc=257 word=0xda0000bf]
+loadimm 5 191
+;; [pc=258 word=0x0000012e]
+cmov 4 5 6
+;; [pc=259 word=0xc0000004]
+loadprog 0 4
+;; [pc=260 word=0xda000008]
+loadimm 5 8
+;; [pc=261 word=0x10000195]
+aidx 6 2 5
+;; [pc=262 word=0xd8000120]
+loadimm 4 288
+;; [pc=263 word=0xda00010a]
+loadimm 5 266
+;; [pc=264 word=0x0000012e]
+cmov 4 5 6
+;; [pc=265 word=0xc0000004]
+loadprog 0 4
+;; [pc=266 word=0xda000008]
+loadimm 5 8
+;; [pc=267 word=0x10000195]
+aidx 6 2 5
+;; [pc=268 word=0x100001b0]
+aidx 6 6 0
+;; [pc=269 word=0xda000006]
+loadimm 5 6
+;; [pc=270 word=0x200000ae]
+aupd 2 5 6
+;; [pc=271 word=0xda000006]
+loadimm 5 6
+;; [pc=272 word=0x10000195]
+aidx 6 2 5
+;; [pc=273 word=0xa0000006]
+out 6
+;; [pc=274 word=0xda000008]
+loadimm 5 8
+;; [pc=275 word=0x10000195]
+aidx 6 2 5
+;; [pc=276 word=0x100001b1]
+aidx 6 6 1
+;; [pc=277 word=0xda000009]
+loadimm 5 9
+;; [pc=278 word=0x200000ae]
+aupd 2 5 6
+;; [pc=279 word=0xda000008]
+loadimm 5 8
+;; [pc=280 word=0x10000195]
+aidx 6 2 5
+;; [pc=281 word=0x90000006]
+dealloc 6
+;; [pc=282 word=0xda000009]
+loadimm 5 9
+;; [pc=283 word=0x10000195]
+aidx 6 2 5
+;; [pc=284 word=0xda000008]
+loadimm 5 8
+;; [pc=285 word=0x200000ae]
+aupd 2 5 6
+;; [pc=286 word=0xd8000104]
+loadimm 4 260
+;; [pc=287 word=0xc0000004]
+loadprog 0 4
+;; [pc=288 word=0xdc00000a]
+loadimm 6 10
+;; [pc=289 word=0xa0000006]
+out 6
+;; [pc=290 word=0x10000111]
+aidx 4 2 1
+;; [pc=291 word=0xc0000004]
+loadprog 0 4
+;; [pc=292 word=0xda000008]
+loadimm 5 8
+;; [pc=293 word=0x80000035]
+alloc 6 5
+;; [pc=294 word=0x20000182]
+aupd 6 0 2
+;; [pc=295 word=0xde00012c]
+loadimm 7 300
+;; [pc=296 word=0x2000018f]
+aupd 6 1 7
+;; [pc=297 word=0xd800002f]
+loadimm 4 47
+;; [pc=298 word=0x000000b1]
+cmov 2 6 1
+;; [pc=299 word=0xc0000004]
+loadprog 0 4
+;; [pc=300 word=0x10000190]
+aidx 6 2 0
+;; [pc=301 word=0xda000002]
+loadimm 5 2
+;; [pc=302 word=0x100001d5]
+aidx 7 2 5
+;; [pc=303 word=0xda000002]
+loadimm 5 2
+;; [pc=304 word=0x200001af]
+aupd 6 5 7
+;; [pc=305 word=0x90000002]
+dealloc 2
+;; [pc=306 word=0x000000b1]
+cmov 2 6 1
+;; [pc=307 word=0xda000002]
+loadimm 5 2
+;; [pc=308 word=0x10000195]
+aidx 6 2 5
+;; [pc=309 word=0x400001b6]
+mul 6 6 6
+;; [pc=310 word=0xda000003]
+loadimm 5 3
+;; [pc=311 word=0x200000ae]
+aupd 2 5 6
+;; [pc=312 word=0xda00000a]
+loadimm 5 10
+;; [pc=313 word=0x80000035]
+alloc 6 5
+;; [pc=314 word=0x20000182]
+aupd 6 0 2
+;; [pc=315 word=0xde000144]
+loadimm 7 324
+;; [pc=316 word=0x2000018f]
+aupd 6 1 7
+;; [pc=317 word=0xda000003]
+loadimm 5 3
+;; [pc=318 word=0x100001d5]
+aidx 7 2 5
+;; [pc=319 word=0xda000002]
+loadimm 5 2
+;; [pc=320 word=0x200001af]
+aupd 6 5 7
+;; [pc=321 word=0xd80000b9]
+loadimm 4 185
+;; [pc=322 word=0x000000b1]
+cmov 2 6 1
+;; [pc=323 word=0xc0000004]
+loadprog 0 4
+;; [pc=324 word=0x10000190]
+aidx 6 2 0
+;; [pc=325 word=0x90000002]
+dealloc 2
+;; [pc=326 word=0x000000b1]
+cmov 2 6 1
+;; [pc=327 word=0x10000111]
+aidx 4 2 1
+;; [pc=328 word=0xc0000004]
+loadprog 0 4
+
+jriver03@b146-46:~/um-emulator$ head -n6 results/helloworld.dis.uma 
+;; [pc=0 word=0xd0000048]
+loadimm 0 72
+;; [pc=1 word=0xa0000000]
+out 0
+;; [pc=2 word=0xd0000065]
+loadimm 0 101
+
+jriver03@b146-46:~/um-emulator$ ./asm programs/helloworld.uma -o out/helloworld_from_asm.um
+
+jriver03@b146-46:~/um-emulator$ ./asm programs/square.uma -o out/square_from_asm.um
+
+jriver03@b146-46:~/um-emulator$ ./loader out/helloworld_from_asm.um | head -n1 
+Hello world!
+
+jriver03@b146-46:~/um-emulator$ printf "12\n" | ./loader out/square_from_asm.um | tail -n1
+144

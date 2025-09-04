@@ -186,6 +186,12 @@ sys  0.00
 
 ---
 
+## Proofs
+
+See proof-b146-46.txt
+
+---
+
 ## File Layout
 
 ```
