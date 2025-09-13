@@ -223,6 +223,27 @@ See proof-b146-46.txt
 
 ---
 
+## Warm up #3: 09/07/2025
+
+Attempted performance improvements that reduced Sandmark wall-time on b146-46 from 16.7s -> 14.2s (~15%) and on my Mac from 22.3s -> 19.6s (~12%). I removed all trace/diagnostic overhead from the hot path (trace now compiled out unless -DTRACE and only active when --trace is passed), added a perf build (-O3 -DNDEBUG -flto), and cached the program/length for faster fetch and bounds checks (refreshing it on loadprog). The remaining VM semantics are unchanged. 
+
+**1. Helpful Changes (kept)**
+
+	- **Trace fully gated**: all TRACEF(...) compiled out in perf/release; runtime tracing only when trace is passed in debug builds. This eliminated format/IO and dead branches from the hot loop.
+	- **Perf toolchain flags:** -O3 -DNDEBUG -flto (link-time inlining & de-virt across TU boundaries). This allowsy the compiler inline helpers (bitfield extractors, be32 load) and tighten the loop.
+	= **Fetch/bounds micro-cache:** code0 = g_arr[0].data; code0_len = g_arr[0].len; reused each cycle; refresh after loadprogt. This avoids two global/struct loads per iteration and helps the branch predictor on the loop guard.
+	- **Tidy hot helpers:** inlined bitfield extractors; kept 32-bit types for registers/memory to match ISA and avoid 64 -> 32 truncations.
+
+**2. Changes that Failed**
+
+	- '-march=native' and '-fomit-frame-pointer' resulted in no consistent speedup on lab Linux; noise-level difference on macOS. Left disabled to keep binaries broadly portable.
+	- Indirect dispatch (function-pointer table) resulted in a slower (~1-3%) vs switch due to harder branch prediction/BTB for the indirect call on this tight ISA.
+	- Computed gotos (GCC/Clang extension) that tied to the last failed improvement; slightly worse than switch on our tests. Not worth the probablility hit.
+	- Pre-decoding the whole program (struct of {op, A, B, C, imm}) that added ~5-8% regression on Sandmark, with th extra memory traffic and i-cache pressure outweighing the save three bitfield extracts. 
+	- mmap loading vs fread resulted with no runtime difference (load cost is amortized; the benchmark is CPU-bound in the interpreter, not IO-bound).
+
+---
+
 ## Acknowledgments
 
 	•	Assignment spec & sample programs:
